@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบแจ้งปัญหา IT Helpdesk</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts (Sarabun) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+        .main-container {
+            max-width: 1200px;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        .card {
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        .card-header {
+            background-color: #0d6efd;
+            color: white;
+            font-weight: 700;
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+        }
+        #admin-view {
+            display: none;
+        }
+        .ticket-card {
+            margin-bottom: 1.5rem;
+        }
+        .ticket-card .card-body {
+            padding: 1.5rem;
+        }
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .ticket-id {
+            font-weight: 700;
+            color: #0d6efd;
+            font-size: 1.1rem;
+        }
+        .status-badge {
+            font-size: 0.9rem;
+            padding: 0.4em 0.8em;
+        }
+        .ticket-details p {
+            margin-bottom: 0.5rem;
+        }
+        .ticket-details strong {
+            min-width: 120px;
+            display: inline-block;
+        }
+        .ticket-footer {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1060; /* Higher z-index */
+        }
+        .modal-backdrop.show {
+            opacity: .25;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#"><i class="bi bi-headset"></i> IT Helpdesk System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <button id="show-form-btn" class="nav-link btn btn-link active">แจ้งปัญหา</button>
+                    </li>
+                    <li class="nav-item">
+                        <button id="show-admin-btn" class="nav-link btn btn-link">สำหรับเจ้าหน้าที่</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container main-container">
+        <!-- Submission Form View -->
+        <div id="form-view">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-pencil-square"></i> แบบฟอร์มแจ้งปัญหา
+                </div>
+                <div class="card-body p-4">
+                    <form id="helpdesk-form">
+                        <div class="mb-3">
+                            <label for="submitterName" class="form-label fw-bold">ชื่อผู้แจ้ง</label>
+                            <input type="text" class="form-control" id="submitterName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="department" class="form-label fw-bold">แผนก / ฝ่าย</label>
+                            <input type="text" class="form-control" id="department" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="problemType" class="form-label fw-bold">ประเภทปัญหา</label>
+                            <select class="form-select" id="problemType" required>
+                                <option selected disabled value="">-- กรุณาเลือก --</option>
+                                <option>Hardware (อุปกรณ์คอมพิวเตอร์)</option>
+                                <option>Software (โปรแกรม)</option>
+                                <option>Network (ระบบเครือข่าย/อินเทอร์เน็ต)</option>
+                                <option>Printer (เครื่องพิมพ์)</option>
+                                <option>Other (อื่นๆ)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="problemDetails" class="form-label fw-bold">รายละเอียดปัญหา</label>
+                            <textarea class="form-control" id="problemDetails" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                            ส่งเรื่อง
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin View -->
+        <div id="admin-view">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-list-task"></i> รายการแจ้งปัญหาทั้งหมด</span>
+                    <button id="refresh-btn" class="btn btn-sm btn-light"><i class="bi bi-arrow-clockwise"></i> โหลดใหม่</button>
+                </div>
+                <div class="card-body p-4">
+                    <div id="ticket-list">
+                        <!-- Tickets will be rendered here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    
+    <!-- Custom Alert Modal -->
+    <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="alertModalLabel">สถานะการดำเนินการ</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="alertModalBody">...</div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="passwordModalLabel">กรุณาใส่รหัสผ่าน</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="password-form">
+              <div class="mb-3">
+                <label for="adminPasswordInput" class="form-label">รหัสผ่านสำหรับเจ้าหน้าที่</label>
+                <input type="password" class="form-control" id="adminPasswordInput" required>
+                <div id="password-error" class="text-danger mt-2" style="display: none;">รหัสผ่านไม่ถูกต้อง!</div>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">เข้าสู่ระบบ</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmModalLabel">ยืนยันการดำเนินการ</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="confirmModalBody">...</div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+            <button type="button" class="btn btn-primary" id="confirmModalBtn">ยืนยัน</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // --- CONFIGURATION ---
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYKnFhgUsIQqj6B09f27eg210oIxy1rcmgX3atEU5_j5j2y8G0NrU9L1qKKEFPOlH-0Q/exec';
+        const ADMIN_PASSWORD = 'e4iA7G-H'; // Change this to a more secure password
+
+        // --- DOM ELEMENTS ---
+        const formView = document.getElementById('form-view');
+        const adminView = document.getElementById('admin-view');
+        const showFormBtn = document.getElementById('show-form-btn');
+        const showAdminBtn = document.getElementById('show-admin-btn');
+        const helpdeskForm = document.getElementById('helpdesk-form');
+        const ticketList = document.getElementById('ticket-list');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const loadingSpinner = document.querySelector('.loading-spinner');
+        
+        // Modals
+        const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
+        const alertModalBody = document.getElementById('alertModalBody');
+        const alertModalLabel = document.getElementById('alertModalLabel');
+        const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
+        const passwordForm = document.getElementById('password-form');
+        const adminPasswordInput = document.getElementById('adminPasswordInput');
+        const passwordError = document.getElementById('password-error');
+        const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        const confirmModalBody = document.getElementById('confirmModalBody');
+        const confirmModalBtn = document.getElementById('confirmModalBtn');
+        let confirmCallback = null;
+
+        // --- FUNCTIONS ---
+
+        function showAlert(message, isSuccess = true) {
+            alertModalLabel.textContent = isSuccess ? 'สำเร็จ!' : 'เกิดข้อผิดพลาด';
+            alertModalBody.innerHTML = message;
+            alertModal.show();
+        }
+        
+        function showConfirm(message, callback) {
+            confirmModalBody.textContent = message;
+            confirmCallback = callback;
+            confirmModal.show();
+        }
+
+        function showLoading(show) {
+            loadingSpinner.style.display = show ? 'block' : 'none';
+        }
+
+        function renderTickets(tickets) {
+            ticketList.innerHTML = ''; // Clear existing tickets
+            if (tickets.length === 0) {
+                ticketList.innerHTML = '<p class="text-center text-muted">ยังไม่มีรายการแจ้งปัญหา</p>';
+                return;
+            }
+
+            tickets.sort((a, b) => {
+                if (a.Status === 'Open' && b.Status !== 'Open') return -1;
+                if (a.Status !== 'Open' && b.Status === 'Open') return 1;
+                // Assuming SubmissionTimestamp is a valid date string from the script
+                return new Date(b.SubmissionTimestamp) - new Date(a.SubmissionTimestamp);
+            });
+
+            tickets.forEach(ticket => {
+                const statusClass = ticket.Status === 'Open' ? 'bg-warning text-dark' : 'bg-success text-white';
+                const ticketCard = `
+                    <div class="card ticket-card">
+                        <div class="card-body">
+                            <div class="ticket-header">
+                                <span class="ticket-id">${ticket.CaseID}</span>
+                                <span class="badge rounded-pill ${statusClass} status-badge">${ticket.Status}</span>
+                            </div>
+                            <div class="ticket-details">
+                                <p><strong>ชื่อผู้แจ้ง:</strong> ${ticket.SubmitterName}</p>
+                                <p><strong>แผนก/ฝ่าย:</strong> ${ticket.Department}</p>
+                                <p><strong>ประเภทปัญหา:</strong> ${ticket.ProblemType}</p>
+                                <p><strong>รายละเอียด:</strong></p>
+                                <p class="text-muted" style="white-space: pre-wrap;">${ticket.ProblemDetails}</p>
+                            </div>
+                            <div class="ticket-footer">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <i class="bi bi-calendar-plus"></i> <strong>เวลาแจ้ง:</strong> ${ticket.SubmissionTimestamp || 'N/A'}
+                                    </div>
+                                    <div class="col-md-6">
+                                        ${ticket.Status === 'Closed' ? `<i class="bi bi-calendar-check"></i> <strong>เวลาปิดเคส:</strong> ${ticket.ClosedTimestamp || 'N/A'}` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            ${ticket.Status === 'Open' ? `
+                            <div class="mt-3 text-end">
+                                <button class="btn btn-success btn-sm close-ticket-btn" data-row-index="${ticket.RowIndex}">
+                                    <i class="bi bi-check-circle"></i> ปิดเคส
+                                </button>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                ticketList.innerHTML += ticketCard;
+            });
+
+            document.querySelectorAll('.close-ticket-btn').forEach(button => {
+                button.addEventListener('click', handleCloseTicket);
+            });
+        }
+
+        async function fetchTickets() {
+            if (SCRIPT_URL === 'YOUR_WEB_APP_URL_HERE') {
+                showAlert('กรุณาตั้งค่า SCRIPT_URL ในโค้ด JavaScript ก่อนใช้งาน', false);
+                return;
+            }
+            showLoading(true);
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const result = await response.json();
+                if (result.success) {
+                    renderTickets(result.data);
+                } else {
+                    showAlert('ไม่สามารถโหลดข้อมูลได้: ' + (result.message || 'Unknown error'), false);
+                }
+            } catch (error) {
+                showAlert('เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error, false);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        function handleCloseTicket(event) {
+            const button = event.target.closest('.close-ticket-btn');
+            const rowIndex = button.dataset.rowIndex;
+            
+            showConfirm('คุณต้องการปิดเคสนี้ใช่หรือไม่?', async () => {
+                showLoading(true);
+                try {
+                    const response = await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'closeTicket', rowIndex: rowIndex })
+                    });
+                    
+                    showAlert('ส่งคำสั่งปิดเคสเรียบร้อยแล้ว กำลังรีเฟรชข้อมูล...');
+                    setTimeout(fetchTickets, 2000);
+
+                } catch (error) {
+                    showAlert('เกิดข้อผิดพลาดในการปิดเคส: ' + error, false);
+                } finally {
+                    // Loading will be hidden by fetchTickets
+                }
+            });
+        }
+
+        // --- EVENT LISTENERS ---
+        showFormBtn.addEventListener('click', () => {
+            formView.style.display = 'block';
+            adminView.style.display = 'none';
+            showFormBtn.classList.add('active');
+            showAdminBtn.classList.remove('active');
+        });
+
+        showAdminBtn.addEventListener('click', () => {
+            adminPasswordInput.value = '';
+            passwordError.style.display = 'none';
+            passwordModal.show();
+        });
+        
+        passwordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = adminPasswordInput.value;
+            if (password === ADMIN_PASSWORD) {
+                passwordModal.hide();
+                formView.style.display = 'none';
+                adminView.style.display = 'block';
+                showAdminBtn.classList.add('active');
+                showFormBtn.classList.remove('active');
+                fetchTickets();
+            } else {
+                passwordError.style.display = 'block';
+            }
+        });
+
+        confirmModalBtn.addEventListener('click', () => {
+            if (typeof confirmCallback === 'function') {
+                confirmCallback();
+            }
+            confirmModal.hide();
+            confirmCallback = null;
+        });
+
+        refreshBtn.addEventListener('click', fetchTickets);
+
+        helpdeskForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const btnSpinner = submitBtn.querySelector('.spinner-border');
+
+            submitBtn.disabled = true;
+            btnSpinner.style.display = 'inline-block';
+
+            const formData = {
+                submitterName: document.getElementById('submitterName').value,
+                department: document.getElementById('department').value,
+                problemType: document.getElementById('problemType').value,
+                problemDetails: document.getElementById('problemDetails').value
+            };
+
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                showAlert('ส่งข้อมูลเรียบร้อยแล้ว! เจ้าหน้าที่จะดำเนินการตรวจสอบต่อไป');
+                helpdeskForm.reset();
+
+            } catch (error) {
+                showAlert('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + error, false);
+            } finally {
+                submitBtn.disabled = false;
+                btnSpinner.style.display = 'none';
+            }
+        });
+
+    </script>
+</body>
+</html>

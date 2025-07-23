@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Helpdesk System</title>
 
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
+    <!-- Google Fonts (Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
 
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
@@ -117,30 +120,42 @@
             background-color: var(--bs-tertiary-bg);
             border: 1px solid var(--bs-border-color);
         }
+        
+        /* New styles for admin dashboard */
+        #admin-dashboard {
+            display: none;
+        }
+        .admin-nav {
+            background-color: #1f2937;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .admin-nav .nav-link {
+            color: #d1d5db;
+        }
+        .admin-nav .nav-link.active {
+            color: #ffffff;
+            background-color: #3b82f6;
+        }
     </style>
 </head>
 <body>
 
+    <!-- Main Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="#"><i class="bi bi-headset"></i> IT Helpdesk System</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <button id="show-form-btn" class="nav-link btn btn-link active">แจ้งปัญหา</button>
-                    </li>
-                    <li class="nav-item">
-                        <button id="show-admin-btn" class="nav-link btn btn-link">สำหรับเจ้าหน้าที่</button>
-                    </li>
-                </ul>
+            <div class="ms-auto">
+                 <button id="login-btn" class="btn btn-outline-primary">เจ้าหน้าที่</button>
+                 <button id="logout-btn" class="btn btn-outline-danger" style="display: none;">ออกจากระบบ</button>
             </div>
         </div>
     </nav>
 
+    <!-- Main Content -->
     <div class="container main-container">
+        <!-- User Form View -->
         <div id="form-view">
             <div class="card">
                 <div class="card-header fs-5">
@@ -148,91 +163,96 @@
                 </div>
                 <div class="card-body p-4">
                     <form id="helpdesk-form">
-                        <div class="mb-3">
-                            <label for="submitterName" class="form-label fw-bold">ชื่อผู้แจ้ง</label>
-                            <input type="text" class="form-control" id="submitterName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="department" class="form-label fw-bold">แผนก / ฝ่าย</label>
-                            <input type="text" class="form-control" id="department" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="problemType" class="form-label fw-bold">ประเภทปัญหา</label>
-                            <select class="form-select" id="problemType" required>
-                                <option selected disabled value="">-- กรุณาเลือก --</option>
-                                <option>Hardware (อุปกรณ์คอมพิวเตอร์)</option>
-                                <option>Software (โปรแกรม)</option>
-                                <option>Network (ระบบเครือข่าย/อินเทอร์เน็ต)</option>
-                                <option>Printer (เครื่องพิมพ์)</option>
-                                <option>Other (อื่นๆ)</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="problemDetails" class="form-label fw-bold">รายละเอียดปัญหา</label>
-                            <textarea class="form-control" id="problemDetails" rows="4" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
-                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
-                            ส่งเรื่อง
-                        </button>
+                        <div class="mb-3"><label for="submitterName" class="form-label fw-bold">ชื่อผู้แจ้ง</label><input type="text" class="form-control" id="submitterName" required></div>
+                        <div class="mb-3"><label for="department" class="form-label fw-bold">แผนก / ฝ่าย</label><input type="text" class="form-control" id="department" required></div>
+                        <div class="mb-3"><label for="problemType" class="form-label fw-bold">ประเภทปัญหา</label><select class="form-select" id="problemType" required><option selected disabled value="">-- กรุณาเลือก --</option><option>Hardware (อุปกรณ์คอมพิวเตอร์)</option><option>Software (โปรแกรม)</option><option>Network (ระบบเครือข่าย/อินเทอร์เน็ต)</option><option>Printer (เครื่องพิมพ์)</option><option>Other (อื่นๆ)</option></select></div>
+                        <div class="mb-3"><label for="problemDetails" class="form-label fw-bold">รายละเอียดปัญหา</label><textarea class="form-control" id="problemDetails" rows="4" required></textarea></div>
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span> ส่งเรื่อง</button>
                     </form>
                 </div>
             </div>
         </div>
 
-        <div id="admin-view" style="display: none;">
-            <div class="card">
-                <div class="card-header fs-5 d-flex justify-content-between align-items-center">
-                    <span><i class="bi bi-list-task"></i> รายการแจ้งปัญหาทั้งหมด</span>
-                    <button id="refresh-btn" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-clockwise"></i></button>
-                </div>
-                <div class="card-body p-4">
-                    <div id="ticket-list">
+        <!-- Admin Dashboard View -->
+        <div id="admin-dashboard">
+            <!-- Admin Navigation Tabs -->
+            <ul class="nav nav-pills admin-nav">
+                <li class="nav-item"><a class="nav-link active" id="nav-tickets" href="#">รายการปัญหา</a></li>
+                <li class="nav-item"><a class="nav-link" id="nav-users" href="#">User Passwords</a></li>
+                <li class="nav-item"><a class="nav-link" id="nav-placeholder1" href="#">ว่าง</a></li>
+                <li class="nav-item"><a class="nav-link" id="nav-placeholder2" href="#">ว่าง</a></li>
+            </ul>
+
+            <!-- Admin Content Panes -->
+            <div id="admin-content">
+                <!-- Ticket List Pane -->
+                <div id="admin-view-tickets">
+                    <div class="card">
+                        <div class="card-header fs-5 d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-list-task"></i> รายการแจ้งปัญหาทั้งหมด</span>
+                            <button id="refresh-btn" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-clockwise"></i></button>
                         </div>
+                        <div class="card-body p-4"><div id="ticket-list"></div></div>
+                    </div>
+                </div>
+                <!-- User Passwords Pane -->
+                <div id="admin-view-users" style="display: none;">
+                    <div class="card"><div class="card-header fs-5"><i class="bi bi-people"></i> User Passwords</div><div class="card-body p-4"><p>ส่วนนี้สำหรับจัดการ User และ Passwords ในอนาคต</p></div></div>
+                </div>
+                <!-- Placeholder 1 Pane -->
+                <div id="admin-view-placeholder1" style="display: none;">
+                    <div class="card"><div class="card-header fs-5"><i class="bi bi-gear"></i> ว่าง</div><div class="card-body p-4"><p>หน้าว่างสำหรับฟังก์ชันเพิ่มเติม 1</p></div></div>
+                </div>
+                <!-- Placeholder 2 Pane -->
+                <div id="admin-view-placeholder2" style="display: none;">
+                    <div class="card"><div class="card-header fs-5"><i class="bi bi-bar-chart"></i> ว่าง</div><div class="card-body p-4"><p>หน้าว่างสำหรับฟังก์ชันเพิ่มเติม 2</p></div></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="loading-spinner">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
-    
+    <!-- Modals and Spinner -->
+    <div class="loading-spinner"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"><span class="visually-hidden">Loading...</span></div></div>
     <div class="modal fade" id="alertModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="alertModalLabel"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="alertModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button></div></div></div></div>
-    <div class="modal fade" id="passwordModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">กรุณาใส่รหัสผ่าน</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="password-form"><div class="mb-3"><label for="adminPasswordInput" class="form-label">รหัสผ่านสำหรับเจ้าหน้าที่</label><input type="password" class="form-control" id="adminPasswordInput" required><div id="password-error" class="text-danger mt-2" style="display: none;">รหัสผ่านไม่ถูกต้อง!</div></div><button type="submit" class="btn btn-primary w-100">เข้าสู่ระบบ</button></form></div></div></div></div>
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">เจ้าหน้าที่ล็อกอิน</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="login-form"><div class="mb-3"><label for="adminUsernameInput" class="form-label">Username</label><input type="text" class="form-control" id="adminUsernameInput" required></div><div class="mb-3"><label for="adminPasswordInput" class="form-label">Password</label><input type="password" class="form-control" id="adminPasswordInput" required></div><div id="login-error" class="text-danger mt-2" style="display: none;">Username หรือ Password ไม่ถูกต้อง!</div><button type="submit" class="btn btn-primary w-100">เข้าสู่ระบบ</button></form></div></div></div></div>
     <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">ยืนยันการดำเนินการ</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="confirmModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button><button type="button" class="btn btn-primary" id="confirmModalBtn">ยืนยัน</button></div></div></div></div>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         // --- CONFIGURATION ---
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYKnFhgUsIQqj6B09f27eg210oIxy1rcmgX3atEU5_j5j2y8G0NrU9L1qKKEFPOlH-0Q/exec';
+        const ADMIN_USERNAME = 'kanate';
         const ADMIN_PASSWORD = 'e4iA7G-H';
 
         // --- DOM ELEMENTS ---
         const formView = document.getElementById('form-view');
-        const adminView = document.getElementById('admin-view');
-        const showFormBtn = document.getElementById('show-form-btn');
-        const showAdminBtn = document.getElementById('show-admin-btn');
+        const adminDashboard = document.getElementById('admin-dashboard');
         const helpdeskForm = document.getElementById('helpdesk-form');
         const ticketList = document.getElementById('ticket-list');
         const refreshBtn = document.getElementById('refresh-btn');
         const loadingSpinner = document.querySelector('.loading-spinner');
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
         
         // Modals
         const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
         const alertModalBody = document.getElementById('alertModalBody');
         const alertModalLabel = document.getElementById('alertModalLabel');
-        const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
-        const passwordForm = document.getElementById('password-form');
+        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+        const loginForm = document.getElementById('login-form');
+        const adminUsernameInput = document.getElementById('adminUsernameInput');
         const adminPasswordInput = document.getElementById('adminPasswordInput');
-        const passwordError = document.getElementById('password-error');
+        const loginError = document.getElementById('login-error');
         const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
         const confirmModalBody = document.getElementById('confirmModalBody');
         const confirmModalBtn = document.getElementById('confirmModalBtn');
         let confirmCallback = null;
+
+        // Admin Nav Elements
+        const adminNavLinks = document.querySelectorAll('.admin-nav .nav-link');
+        const adminContentPanes = document.querySelectorAll('#admin-content > div');
 
         // --- FUNCTIONS ---
         function showAlert(message, isSuccess = true) {
@@ -249,6 +269,15 @@
 
         function showLoading(show) {
             loadingSpinner.style.display = show ? 'block' : 'none';
+        }
+        
+        function switchAdminView(targetId) {
+            adminContentPanes.forEach(pane => {
+                pane.style.display = pane.id === targetId ? 'block' : 'none';
+            });
+            adminNavLinks.forEach(link => {
+                link.classList.toggle('active', link.id === `nav-${targetId.split('-')[2]}`);
+            });
         }
 
         function renderTickets(tickets) {
@@ -267,37 +296,26 @@
             tickets.forEach(ticket => {
                 const statusClass = ticket.Status === 'Open' ? 'bg-warning' : 'bg-success';
                 const ticketCard = `
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <span class="ticket-id">${ticket.CaseID}</span>
-                                <span class="badge rounded-pill status-badge ${statusClass}">${ticket.Status}</span>
-                            </div>
-                            <div class="ticket-details">
-                                <p><strong>ชื่อผู้แจ้ง:</strong> ${ticket.SubmitterName}</p>
-                                <p><strong>แผนก/ฝ่าย:</strong> ${ticket.Department}</p>
-                                <p><strong>ประเภท:</strong> ${ticket.ProblemType}</p>
-                                <p><strong>รายละเอียด:</strong></p>
-                                <p class="text-secondary" style="white-space: pre-wrap;">${ticket.ProblemDetails}</p>
-                            </div>
-                            <div class="ticket-footer small mt-3 pt-3 border-top border-secondary-subtle">
-                                <div class="row">
-                                    <div class="col-md-6 mb-1 mb-md-0">
-                                        <i class="bi bi-calendar-plus"></i> <strong>เวลาแจ้ง:</strong> ${ticket.SubmissionTimestamp || 'N/A'}
-                                    </div>
-                                    <div class="col-md-6">
-                                        ${ticket.Status === 'Closed' ? `<i class="bi bi-calendar-check"></i> <strong>เวลาปิดเคส:</strong> ${ticket.ClosedTimestamp || 'N/A'}` : ''}
-                                    </div>
-                                </div>
-                            </div>
-                            ${ticket.Status === 'Open' ? `
-                            <div class="mt-3 text-end">
-                                <button class="btn btn-success btn-sm close-ticket-btn" data-row-index="${ticket.RowIndex}">
-                                    <i class="bi bi-check-circle"></i> ปิดเคส
-                                </button>
-                            </div>` : ''}
+                    <div class="card mb-3"><div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="ticket-id">${ticket.CaseID}</span>
+                            <span class="badge rounded-pill status-badge ${statusClass}">${ticket.Status}</span>
                         </div>
-                    </div>`;
+                        <div class="ticket-details">
+                            <p><strong>ชื่อผู้แจ้ง:</strong> ${ticket.SubmitterName}</p>
+                            <p><strong>แผนก/ฝ่าย:</strong> ${ticket.Department}</p>
+                            <p><strong>ประเภท:</strong> ${ticket.ProblemType}</p>
+                            <p><strong>รายละเอียด:</strong></p>
+                            <p class="text-secondary" style="white-space: pre-wrap;">${ticket.ProblemDetails}</p>
+                        </div>
+                        <div class="ticket-footer small mt-3 pt-3 border-top border-secondary-subtle">
+                            <div class="row">
+                                <div class="col-md-6 mb-1 mb-md-0"><i class="bi bi-calendar-plus"></i> <strong>เวลาแจ้ง:</strong> ${ticket.SubmissionTimestamp || 'N/A'}</div>
+                                <div class="col-md-6">${ticket.Status === 'Closed' ? `<i class="bi bi-calendar-check"></i> <strong>เวลาปิดเคส:</strong> ${ticket.ClosedTimestamp || 'N/A'}` : ''}</div>
+                            </div>
+                        </div>
+                        ${ticket.Status === 'Open' ? `<div class="mt-3 text-end"><button class="btn btn-success btn-sm close-ticket-btn" data-row-index="${ticket.RowIndex}"><i class="bi bi-check-circle"></i> ปิดเคส</button></div>` : ''}
+                    </div></div>`;
                 ticketList.insertAdjacentHTML('beforeend', ticketCard);
             });
 
@@ -331,16 +349,9 @@
             showConfirm('คุณต้องการปิดเคสนี้ใช่หรือไม่?', async () => {
                 showLoading(true);
                 try {
-                    await fetch(SCRIPT_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: 'closeTicket', rowIndex: rowIndex })
-                    });
-                    
+                    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'closeTicket', rowIndex: rowIndex }) });
                     showAlert('ส่งคำสั่งปิดเคสเรียบร้อยแล้ว กำลังรีเฟรชข้อมูล...');
                     setTimeout(fetchTickets, 2000);
-
                 } catch (error) {
                     showAlert('เกิดข้อผิดพลาดในการปิดเคส: ' + error, false);
                     showLoading(false);
@@ -349,31 +360,46 @@
         }
 
         // --- EVENT LISTENERS ---
-        showFormBtn.addEventListener('click', () => {
-            formView.style.display = 'block';
-            adminView.style.display = 'none';
-            showFormBtn.classList.add('active');
-            showAdminBtn.classList.remove('active');
-        });
-
-        showAdminBtn.addEventListener('click', () => {
-            adminPasswordInput.value = '';
-            passwordError.style.display = 'none';
-            passwordModal.show();
+        loginBtn.addEventListener('click', () => {
+            loginModal.show();
         });
         
-        passwordForm.addEventListener('submit', (e) => {
+        logoutBtn.addEventListener('click', () => {
+            adminDashboard.style.display = 'none';
+            formView.style.display = 'block';
+            logoutBtn.style.display = 'none';
+            loginBtn.style.display = 'block';
+        });
+
+        loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            if (adminPasswordInput.value === ADMIN_PASSWORD) {
-                passwordModal.hide();
+            const username = adminUsernameInput.value;
+            const password = adminPasswordInput.value;
+
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                loginModal.hide();
                 formView.style.display = 'none';
-                adminView.style.display = 'block';
-                showAdminBtn.classList.add('active');
-                showFormBtn.classList.remove('active');
+                adminDashboard.style.display = 'block';
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'block';
+                
+                // Reset to default admin view
+                switchAdminView('admin-view-tickets');
                 fetchTickets();
+                
+                loginForm.reset();
+                loginError.style.display = 'none';
             } else {
-                passwordError.style.display = 'block';
+                loginError.style.display = 'block';
             }
+        });
+
+        adminNavLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetPaneId = `admin-view-${e.target.id.split('-')[1]}`;
+                switchAdminView(targetPaneId);
+            });
         });
 
         confirmModalBtn.addEventListener('click', () => {
@@ -390,7 +416,6 @@
             e.preventDefault();
             const submitBtn = e.target.querySelector('button[type="submit"]');
             const btnSpinner = submitBtn.querySelector('.spinner-border');
-
             submitBtn.disabled = true;
             btnSpinner.style.display = 'inline-block';
 
@@ -402,11 +427,7 @@
             };
 
             try {
-                await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify(formData)
-                });
+                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(formData) });
                 showAlert('ส่งข้อมูลเรียบร้อยแล้ว! เจ้าหน้าที่จะดำเนินการตรวจสอบต่อไป');
                 helpdeskForm.reset();
             } catch (error) {

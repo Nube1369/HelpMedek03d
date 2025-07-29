@@ -11,38 +11,445 @@
     <!-- Google Fonts (Inter & Sarabun) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+    <!-- Chart.js for Dashboard -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         :root {
             --bs-body-font-family: 'Inter', 'Sarabun', sans-serif;
-            --bs-primary-rgb: 59, 130, 246;
-            --bs-body-bg: #111827;
-            --bs-tertiary-bg: #1f2937;
-            --bs-border-color: rgba(255, 255, 255, 0.1);
+            --bs-primary-rgb: 34, 197, 94;
+            --bs-primary: #22c55e;
+            --bs-primary-dark: #16a34a;
+            --bs-body-bg: #0f172a;
+            --bs-body-color: #e2e8f0;
+            --bs-tertiary-bg: #1e293b;
+            --bs-secondary-bg: #334155;
+            --bs-border-color: rgba(148, 163, 184, 0.15);
+            --bs-card-bg: #1e293b;
+            --bs-input-bg: #334155;
+            --bs-hover-bg: #475569;
+            --gradient-primary: linear-gradient(135deg, #22c55e 0%, #059669 100%);
+            --gradient-secondary: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            --shadow-primary: 0 10px 25px -5px rgba(34, 197, 94, 0.1), 0 8px 10px -6px rgba(34, 197, 94, 0.1);
+            --shadow-card: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         }
-        body { background-color: var(--bs-body-bg); color: #d1d5db; }
-        .navbar { background-color: var(--bs-tertiary-bg); border-bottom: 1px solid var(--bs-border-color); }
-        .main-container { max-width: 1200px; margin-top: 2rem; margin-bottom: 2rem; }
-        .card { background-color: var(--bs-tertiary-bg); border: 1px solid var(--bs-border-color); border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); }
-        .card-header { background-color: rgba(59, 130, 246, 0.1); color: #eff6ff; font-weight: 500; border-bottom: 1px solid var(--bs-border-color); }
-        .form-control, .form-select { background-color: #374151; color: #d1d5db; border-color: #4b5563; }
-        .form-control:focus, .form-select:focus { background-color: #4b5563; color: #f9fafb; border-color: #3b82f6; box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25); }
-        .form-control::placeholder { color: #9ca3af; }
-        .ticket-id { font-weight: 700; color: #60a5fa; font-size: 1.1rem; }
-        .status-badge.bg-warning { background-color: #f59e0b !important; color: #1f2937 !important; }
-        .status-badge.bg-success { background-color: #10b981 !important; color: #ffffff !important; }
-        .ticket-details strong { color: #e5e7eb; min-width: 120px; display: inline-block; }
-        .ticket-footer { color: #9ca3af; }
-        .loading-spinner { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1060; }
-        .modal-content { background-color: var(--bs-tertiary-bg); border: 1px solid var(--bs-border-color); }
-        #admin-dashboard { display: none; }
-        .admin-nav { background-color: #1f2937; padding: 0.5rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; }
-        .admin-nav .nav-link { color: #d1d5db; }
-        .admin-nav .nav-link.active { color: #ffffff; background-color: #3b82f6; }
+
+        * {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body { 
+            background: var(--bs-body-bg);
+            background-image: 
+                radial-gradient(at 40% 20%, rgba(34, 197, 94, 0.05) 0px, transparent 50%),
+                radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
+                radial-gradient(at 0% 50%, rgba(139, 92, 246, 0.05) 0px, transparent 50%);
+            color: var(--bs-body-color);
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        /* Enhanced Navbar */
+        .navbar { 
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--bs-border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+
+        /* Main Container */
+        .main-container { 
+            max-width: 1200px; 
+            margin-top: 3rem; 
+            margin-bottom: 3rem; 
+        }
+
+        /* Enhanced Cards */
+        .card { 
+            background: var(--gradient-secondary);
+            border: 1px solid var(--bs-border-color);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-primary);
+        }
+
+        .card-header { 
+            background: rgba(34, 197, 94, 0.1);
+            color: #f0fdf4;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(34, 197, 94, 0.2);
+            padding: 1.25rem 1.5rem;
+            letter-spacing: -0.025em;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        /* Enhanced Form Elements */
+        .form-label {
+            font-weight: 500;
+            color: var(--bs-body-color);
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .form-control, .form-select { 
+            background: var(--bs-input-bg);
+            color: var(--bs-body-color);
+            border: 1px solid var(--bs-border-color);
+            border-radius: 0.75rem;
+            padding: 0.875rem 1rem;
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        .form-control:focus, .form-select:focus { 
+            background: var(--bs-hover-bg);
+            color: #f8fafc;
+            border-color: var(--bs-primary);
+            box-shadow: 0 0 0 0.2rem rgba(34, 197, 94, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .form-control::placeholder { 
+            color: #94a3b8;
+            font-weight: 300;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Enhanced Buttons */
+        .btn {
+            font-weight: 500;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            letter-spacing: -0.025em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--bs-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(34, 197, 94, 0.2);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--bs-primary);
+            color: var(--bs-primary);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--bs-primary);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-secondary {
+            border: 1px solid var(--bs-border-color);
+            color: var(--bs-body-color);
+            background: rgba(148, 163, 184, 0.1);
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--bs-hover-bg);
+            border-color: var(--bs-hover-bg);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+        }
+
+        .btn-outline-warning {
+            border-color: #f59e0b;
+            color: #fbbf24;
+        }
+
+        .btn-outline-danger {
+            border-color: #ef4444;
+            color: #f87171;
+        }
+
+        /* Ticket Styling */
+        .ticket-id { 
+            font-weight: 700;
+            color: var(--bs-primary);
+            font-size: 1.1rem;
+            letter-spacing: -0.025em;
+        }
+
+        .status-badge {
+            font-weight: 500;
+            padding: 0.375rem 0.875rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            letter-spacing: 0.025em;
+        }
+
+        .status-badge.bg-warning { 
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+            color: #1f2937 !important;
+            box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.3);
+        }
+
+        .status-badge.bg-success { 
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+        }
+
+        .ticket-details strong { 
+            color: #f1f5f9;
+            min-width: 130px;
+            display: inline-block;
+            font-weight: 500;
+        }
+
+        .ticket-footer { 
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner { 
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1060;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 2rem;
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Modal Enhancements */
+        .modal-content { 
+            background: var(--bs-card-bg);
+            border: 1px solid var(--bs-border-color);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--bs-border-color);
+            padding: 1.5rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--bs-border-color);
+            padding: 1.5rem;
+        }
+
+        /* Admin Dashboard */
+        #admin-dashboard { 
+            display: none; 
+        }
+
+        .admin-nav { 
+            background: var(--gradient-secondary);
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--bs-border-color);
+        }
+
+        .admin-nav .nav-link { 
+            color: #cbd5e1;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+
+        .admin-nav .nav-link:hover {
+            color: #f8fafc;
+            background: rgba(148, 163, 184, 0.1);
+        }
+
+        .admin-nav .nav-link.active { 
+            color: #ffffff;
+            background: var(--gradient-primary);
+            box-shadow: var(--shadow-primary);
+        }
+        
+        /* Dashboard Cards */
+        .dashboard-card {
+            background: var(--gradient-secondary);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            border: 1px solid var(--bs-border-color);
+        }
+
+        .dashboard-card .icon-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+        }
+
+        .dashboard-card .icon-circle.bg-primary-soft {
+             background: rgba(34, 197, 94, 0.1);
+             color: var(--bs-primary);
+        }
+        
+        .dashboard-card .icon-circle.bg-warning-soft {
+             background: rgba(245, 158, 11, 0.1);
+             color: #f59e0b;
+        }
+
+        .dashboard-card .icon-circle.bg-info-soft {
+             background: rgba(59, 130, 246, 0.1);
+             color: #3b82f6;
+        }
+        
+        .dashboard-card .card-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #f8fafc;
+            letter-spacing: -0.025em;
+        }
+        
+        .dashboard-card .card-label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #94a3b8;
+        }
+
+        #problemTypeChart {
+            max-height: 350px;
+            width: 100% !important;
+        }
+
+        /* Table Enhancements */
+        .table {
+            background: transparent;
+        }
+
+        .table th {
+            border-color: var(--bs-border-color);
+            color: #f1f5f9;
+            font-weight: 600;
+            padding: 1rem;
+        }
+
+        .table td {
+            border-color: var(--bs-border-color);
+            color: var(--bs-body-color);
+            padding: 1rem;
+        }
+
+        .table-hover tbody tr:hover {
+            background: rgba(148, 163, 184, 0.05);
+        }
+
+        /* Form Improvements */
+        .mb-3 {
+            margin-bottom: 1.5rem !important;
+        }
+
+        .row.g-3 {
+            --bs-gutter-x: 1rem;
+        }
+
+        /* Icon Enhancements */
+        .bi {
+            vertical-align: -0.125em;
+        }
+
+        /* Responsive Improvements */
+        @media (max-width: 768px) {
+            .main-container {
+                margin-top: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .card-body {
+                padding: 1.5rem;
+            }
+            
+            .btn {
+                padding: 0.65rem 1.25rem;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bs-tertiary-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bs-secondary-bg);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--bs-hover-bg);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card, .dashboard-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
     </style>
 </head>
 <body>
@@ -50,10 +457,22 @@
     <!-- Main Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="#"><i class="bi bi-headset"></i> IT Helpdesk System</a>
+            <!-- LOGO PLACEMENT -->
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
+                <!-- Company Logo -->
+                <img src="https://res.cloudinary.com/dqveqz8cy/image/upload/v1753430042/IT_Logo_ptq112.png" 
+                     alt="IT Helpdesk Logo" 
+                     style="height: 40px; margin-right: 12px;">
+            </a>
             <div class="ms-auto">
-                 <button id="login-btn" class="btn btn-outline-primary">เจ้าหน้าที่</button>
-                 <button id="logout-btn" class="btn btn-outline-danger" style="display: none;">ออกจากระบบ</button>
+                 <button id="login-btn" class="btn btn-outline-primary">
+                     <i class="bi bi-person-badge"></i>
+                     เจ้าหน้าที่
+                 </button>
+                 <button id="logout-btn" class="btn btn-outline-danger" style="display: none;">
+                     <i class="bi bi-box-arrow-right"></i>
+                     ออกจากระบบ
+                 </button>
             </div>
         </div>
     </nav>
@@ -62,25 +481,313 @@
     <div class="container main-container">
         <!-- User Form View -->
         <div id="form-view">
-            <div class="card"><div class="card-header fs-5"><i class="bi bi-pencil-square"></i> แบบฟอร์มแจ้งปัญหา</div><div class="card-body p-4"><form id="helpdesk-form"><div class="mb-3"><label for="submitterName" class="form-label fw-bold">ชื่อผู้แจ้ง</label><input type="text" class="form-control" id="submitterName" required></div><div class="mb-3"><label for="department" class="form-label fw-bold">แผนก / ฝ่าย</label><input type="text" class="form-control" id="department" required></div><div class="mb-3"><label for="problemType" class="form-label fw-bold">ประเภทปัญหา</label><select class="form-select" id="problemType" required><option selected disabled value="">-- กรุณาเลือก --</option><option>Hardware (อุปกรณ์คอมพิวเตอร์)</option><option>Software (โปรแกรม)</option><option>Network (ระบบเครือข่าย/อินเทอร์เน็ต)</option><option>Printer (เครื่องพิมพ์)</option><option>Other (อื่นๆ)</option></select></div><div class="mb-3"><label for="problemDetails" class="form-label fw-bold">รายละเอียดปัญหา</label><textarea class="form-control" id="problemDetails" rows="4" required></textarea></div><button type="submit" class="btn btn-primary w-100 py-2 fw-bold"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span> ส่งเรื่อง</button></form></div></div>
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-pencil-square me-2"></i>
+                    แบบฟอร์มแจ้งปัญหา
+                </div>
+                <div class="card-body">
+                    <form id="helpdesk-form">
+                        <div class="mb-3">
+                            <label for="submitterName" class="form-label">
+                                <i class="bi bi-person me-1"></i>
+                                ชื่อผู้แจ้ง
+                            </label>
+                            <input type="text" class="form-control" id="submitterName" placeholder="กรุณากรอกชื่อ-นามสกุล" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="department" class="form-label">
+                                <i class="bi bi-building me-1"></i>
+                                แผนก / ฝ่าย
+                            </label>
+                            <input type="text" class="form-control" id="department" placeholder="กรุณากรอกแผนกหรือฝ่ายงาน" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="problemType" class="form-label">
+                                <i class="bi bi-tags me-1"></i>
+                                ประเภทปัญหา
+                            </label>
+                            <select class="form-select" id="problemType" required>
+                                <option selected disabled value="">-- กรุณาเลือกประเภทปัญหา --</option>
+                                <option>Hardware (อุปกรณ์คอมพิวเตอร์)</option>
+                                <option>Software (โปรแกรม)</option>
+                                <option>Network (ระบบเครือข่าย/อินเทอร์เน็ต)</option>
+                                <option>Printer (เครื่องพิมพ์)</option>
+                                <option>Other (อื่นๆ)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="problemDetails" class="form-label">
+                                <i class="bi bi-chat-text me-1"></i>
+                                รายละเอียดปัญหา
+                            </label>
+                            <textarea class="form-control" id="problemDetails" rows="4" placeholder="กรุณาอธิบายปัญหาที่พบโดยละเอียด..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-3">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" style="display: none;"></span>
+                            <i class="bi bi-send me-1"></i>
+                            ส่งเรื่องแจ้งปัญหา
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <!-- Admin Dashboard View -->
         <div id="admin-dashboard">
-            <ul class="nav nav-pills admin-nav"><li class="nav-item"><a class="nav-link active" id="nav-tickets" href="#">รายการปัญหา</a></li><li class="nav-item"><a class="nav-link" id="nav-users" href="#">จัดการผู้ใช้</a></li></ul>
+            <ul class="nav nav-pills admin-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" id="nav-dashboard" href="#">
+                        <i class="bi bi-grid-1x2-fill me-1"></i>
+                        ภาพรวม
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="nav-tickets" href="#">
+                        <i class="bi bi-list-task me-1"></i>
+                        รายการปัญหา
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="nav-users" href="#">
+                        <i class="bi bi-people me-1"></i>
+                        จัดการผู้ใช้
+                    </a>
+                </li>
+            </ul>
             <div id="admin-content">
-                <div id="admin-view-tickets"><div class="card"><div class="card-header fs-5 d-flex justify-content-between align-items-center"><span><i class="bi bi-list-task"></i> รายการแจ้งปัญหาทั้งหมด</span><button id="refresh-btn" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-clockwise"></i></button></div><div class="card-body p-4"><div id="ticket-list"></div></div></div></div>
-                <div id="admin-view-users" style="display: none;"><div class="card"><div class="card-header fs-5"><i class="bi bi-people"></i> จัดการผู้ใช้ระบบ</div><div class="card-body p-4"><div class="mb-4"><form id="add-user-form" class="row g-3 align-items-end"><div class="col-sm-4"><label for="newUsername" class="form-label">Username</label><input type="text" class="form-control" id="newUsername" required></div><div class="col-sm-4"><label for="newPassword" class="form-label">Password</label><input type="text" class="form-control" id="newPassword" required></div><div class="col-sm-4"><button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-circle"></i> เพิ่มผู้ใช้</button></div></form><small id="user-limit-msg" class="form-text text-muted mt-2"></small></div><div class="table-responsive"><table class="table table-hover"><thead><tr><th>Username</th><th>Password</th><th class="text-end">Actions</th></tr></thead><tbody id="user-table-body"></tbody></table></div></div></div></div>
+                <!-- Dashboard Pane -->
+                <div id="admin-view-dashboard">
+                    <!-- Summary Cards -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <div class="dashboard-card">
+                                <div class="icon-circle bg-warning-soft">
+                                    <i class="bi bi-folder2-open"></i>
+                                </div>
+                                <div>
+                                    <div id="open-cases-count" class="card-value">0</div>
+                                    <div class="card-label">เคสที่เปิดอยู่</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="dashboard-card">
+                                <div class="icon-circle bg-primary-soft">
+                                    <i class="bi bi-patch-check-fill"></i>
+                                </div>
+                                <div>
+                                    <div id="closed-cases-count" class="card-value">0</div>
+                                    <div class="card-label">เคสที่ปิดแล้ว</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="dashboard-card">
+                                <div class="icon-circle bg-info-soft">
+                                    <i class="bi bi-journal-text"></i>
+                                </div>
+                                <div>
+                                    <div id="total-cases-count" class="card-value">0</div>
+                                    <div class="card-label">เคสทั้งหมด</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Chart Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-pie-chart-fill me-2"></i>
+                            สัดส่วนประเภทปัญหา
+                        </div>
+                        <div class="card-body">
+                            <canvas id="problemTypeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tickets Pane -->
+                <div id="admin-view-tickets" style="display: none;">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>
+                                <i class="bi bi-list-task me-2"></i>
+                                รายการแจ้งปัญหาทั้งหมด
+                            </span>
+                            <button id="refresh-btn" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-arrow-clockwise me-1"></i>
+                                รีเฟรช
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="ticket-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Pane -->
+                <div id="admin-view-users" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-people me-2"></i>
+                            จัดการผู้ใช้ระบบ
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <form id="add-user-form" class="row g-3 align-items-end">
+                                    <div class="col-sm-4">
+                                        <label for="newUsername" class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="newUsername" placeholder="ชื่อผู้ใช้" required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label for="newPassword" class="form-label">Password</label>
+                                        <input type="text" class="form-control" id="newPassword" placeholder="รหัสผ่าน" required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="bi bi-plus-circle me-1"></i>
+                                            เพิ่มผู้ใช้
+                                        </button>
+                                    </div>
+                                </form>
+                                <small id="user-limit-msg" class="form-text text-muted mt-2"></small>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Username</th>
+                                            <th>Password</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="user-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Modals and Spinner -->
-    <div class="loading-spinner"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"><span class="visually-hidden">Loading...</span></div></div>
-    <div class="modal fade" id="alertModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="alertModalLabel"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="alertModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button></div></div></div></div>
-    <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">เจ้าหน้าที่ล็อกอิน</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="login-form"><div class="mb-3"><label for="adminUsernameInput" class="form-label">Username</label><input type="text" class="form-control" id="adminUsernameInput" required></div><div class="mb-3"><label for="adminPasswordInput" class="form-label">Password</label><input type="password" class="form-control" id="adminPasswordInput" required></div><div id="login-error" class="text-danger mt-2" style="display: none;">Username หรือ Password ไม่ถูกต้อง!</div><button type="submit" class="btn btn-primary w-100">เข้าสู่ระบบ</button></form></div></div></div></div>
-    <div class="modal fade" id="confirmModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">ยืนยันการดำเนินการ</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="confirmModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button><button type="button" class="btn btn-primary" id="confirmModalBtn">ยืนยัน</button></div></div></div></div>
-    <div class="modal fade" id="editUserModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">แก้ไขข้อมูลผู้ใช้</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="edit-user-form"><input type="hidden" id="editUserRowIndex"><div class="mb-3"><label for="editUsername" class="form-label">Username</label><input type="text" class="form-control" id="editUsername" required></div><div class="mb-3"><label for="editPassword" class="form-label">Password</label><input type="text" class="form-control" id="editPassword" required></div><button type="submit" class="btn btn-primary w-100">บันทึกการเปลี่ยนแปลง</button></form></div></div></div></div>
+    <div class="loading-spinner">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="alertModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="alertModalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-shield-lock me-2"></i>
+                        เจ้าหน้าที่ล็อกอิน
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label for="adminUsernameInput" class="form-label">
+                                <i class="bi bi-person me-1"></i>
+                                Username
+                            </label>
+                            <input type="text" class="form-control" id="adminUsernameInput" placeholder="ชื่อผู้ใช้" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="adminPasswordInput" class="form-label">
+                                <i class="bi bi-key me-1"></i>
+                                Password
+                            </label>
+                            <input type="password" class="form-control" id="adminPasswordInput" placeholder="รหัสผ่าน" required>
+                        </div>
+                        <div id="login-error" class="text-danger mt-2" style="display: none;">
+                            <i class="bi bi-exclamation-triangle me-1"></i>
+                            Username หรือ Password ไม่ถูกต้อง!
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>
+                            เข้าสู่ระบบ
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-question-circle me-2"></i>
+                        ยืนยันการดำเนินการ
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="confirmModalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button type="button" class="btn btn-primary" id="confirmModalBtn">ยืนยัน</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="editUserModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        แก้ไขข้อมูลผู้ใช้
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-user-form">
+                        <input type="hidden" id="editUserRowIndex">
+                        <div class="mb-3">
+                            <label for="editUsername" class="form-label">
+                                <i class="bi bi-person me-1"></i>
+                                Username
+                            </label>
+                            <input type="text" class="form-control" id="editUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPassword" class="form-label">
+                                <i class="bi bi-key me-1"></i>
+                                Password
+                            </label>
+                            <input type="text" class="form-control" id="editPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-check-circle me-1"></i>
+                            บันทึกการเปลี่ยนแปลง
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -92,6 +799,7 @@
         // --- GLOBAL STATE ---
         let allTickets = [];
         let adminUsers = [];
+        let problemTypeChart = null; // To hold the chart instance
 
         // --- DOM ELEMENTS ---
         const formView = document.getElementById('form-view');
@@ -106,6 +814,12 @@
         const addUserForm = document.getElementById('add-user-form');
         const userLimitMsg = document.getElementById('user-limit-msg');
         
+        // Dashboard elements
+        const openCasesCountEl = document.getElementById('open-cases-count');
+        const closedCasesCountEl = document.getElementById('closed-cases-count');
+        const totalCasesCountEl = document.getElementById('total-cases-count');
+        const chartCanvas = document.getElementById('problemTypeChart');
+
         // Modals
         const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
         const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
@@ -136,31 +850,139 @@
         
         function switchAdminView(targetId) {
             adminContentPanes.forEach(pane => { pane.style.display = pane.id === targetId ? 'block' : 'none'; });
-            adminNavLinks.forEach(link => { link.classList.toggle('active', link.id === `nav-${targetId.split('-')[2]}`); });
+            adminNavLinks.forEach(link => { 
+                const paneName = targetId.split('-')[2];
+                link.classList.toggle('active', link.id === `nav-${paneName}`); 
+            });
+            // Refresh chart if switching to dashboard view
+            if (targetId === 'admin-view-dashboard' && allTickets.length > 0) {
+                renderDashboard(allTickets);
+            }
         }
 
         async function postToAction(action, data) {
             showLoading(true);
+            const submitBtn = helpdeskForm.querySelector('button[type="submit"]');
+            const spinner = submitBtn.querySelector('.spinner-border');
+            if(spinner) spinner.style.display = 'inline-block';
+            if(submitBtn) submitBtn.disabled = true;
+
             try {
-                const response = await fetch(SCRIPT_URL, {
+                // Using 'no-cors' mode means we won't get a response back,
+                // but it avoids CORS errors when calling Google Apps Script from a local file.
+                // The script must be configured to handle the POST request correctly.
+                await fetch(SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
+                    cache: 'no-cache',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action, ...data })
                 });
-                // Assuming success due to no-cors. Refresh data to see changes.
-                showAlert('ดำเนินการเรียบร้อย กำลังรีเฟรชข้อมูล...');
+                
+                // Since we don't get a response, we assume success and show a generic message.
+                showAlert('ดำเนินการเรียบร้อยแล้ว! ข้อมูลจะถูกรีเฟรชในไม่ช้า');
+                
+                // Reset form if it was a ticket submission
+                if (action === 'submitTicket') {
+                    helpdeskForm.reset();
+                }
+
+                // Refresh all data after 2 seconds to see the changes
                 setTimeout(fetchInitialData, 2000);
+
             } catch (error) {
-                showAlert('เกิดข้อผิดพลาด: ' + error, false);
+                console.error('Fetch Error:', error);
+                showAlert('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + error.message, false);
                 showLoading(false);
+            } finally {
+                if(spinner) spinner.style.display = 'none';
+                if(submitBtn) submitBtn.disabled = false;
             }
+        }
+
+        function sanitizeHTML(str) {
+            const temp = document.createElement('div');
+            temp.textContent = str;
+            return temp.innerHTML;
+        }
+
+        function renderDashboard(tickets) {
+            const openCount = tickets.filter(t => t.Status === 'Open').length;
+            const closedCount = tickets.length - openCount;
+            
+            openCasesCountEl.textContent = openCount;
+            closedCasesCountEl.textContent = closedCount;
+            totalCasesCountEl.textContent = tickets.length;
+
+            const typeCounts = tickets.reduce((acc, ticket) => {
+                const type = ticket.ProblemType || 'Unknown';
+                acc[type] = (acc[type] || 0) + 1;
+                return acc;
+            }, {});
+
+            const chartLabels = Object.keys(typeCounts);
+            const chartData = Object.values(typeCounts);
+            
+            if (problemTypeChart) {
+                problemTypeChart.destroy();
+            }
+
+            const ctx = chartCanvas.getContext('2d');
+            problemTypeChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'จำนวนเคส',
+                        data: chartData,
+                        backgroundColor: [
+                            'rgba(34, 197, 94, 0.7)',
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(239, 68, 68, 0.7)',
+                            'rgba(168, 85, 247, 0.7)',
+                            'rgba(236, 72, 153, 0.7)'
+                        ],
+                        borderColor: [
+                            '#22c55e',
+                            '#3b82f6',
+                            '#f59e0b',
+                            '#ef4444',
+                            '#a855f7',
+                            '#ec4899'
+                        ],
+                        borderWidth: 2,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#e2e8f0',
+                                font: {
+                                    family: "'Inter', 'Sarabun', sans-serif",
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            titleFont: { family: "'Inter', 'Sarabun', sans-serif" },
+                            bodyFont: { family: "'Inter', 'Sarabun', sans-serif" }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
         }
 
         function renderTickets(tickets) {
             ticketList.innerHTML = '';
             if (!tickets || tickets.length === 0) {
-                ticketList.innerHTML = '<p class="text-center text-muted">ยังไม่มีรายการแจ้งปัญหา</p>';
+                ticketList.innerHTML = '<p class="text-center text-muted p-5">ยังไม่มีรายการแจ้งปัญหา</p>';
                 return;
             }
             tickets.sort((a, b) => {
@@ -170,9 +992,12 @@
             });
             tickets.forEach(ticket => {
                 const statusClass = ticket.Status === 'Open' ? 'bg-warning' : 'bg-success';
-                ticketList.insertAdjacentHTML('beforeend', `<div class="card mb-3"><div class="card-body"><div class="d-flex justify-content-between align-items-start mb-2"><span class="ticket-id">${ticket.CaseID}</span><span class="badge rounded-pill status-badge ${statusClass}">${ticket.Status}</span></div><div class="ticket-details"><p><strong>ชื่อผู้แจ้ง:</strong> ${ticket.SubmitterName}</p><p><strong>แผนก/ฝ่าย:</strong> ${ticket.Department}</p><p><strong>ประเภท:</strong> ${ticket.ProblemType}</p><p><strong>รายละเอียด:</strong></p><p class="text-secondary" style="white-space: pre-wrap;">${ticket.ProblemDetails}</p></div><div class="ticket-footer small mt-3 pt-3 border-top border-secondary-subtle"><div class="row"><div class="col-md-6 mb-1 mb-md-0"><i class="bi bi-calendar-plus"></i> <strong>เวลาแจ้ง:</strong> ${ticket.SubmissionTimestamp || 'N/A'}</div><div class="col-md-6">${ticket.Status === 'Closed' ? `<i class="bi bi-calendar-check"></i> <strong>เวลาปิดเคส:</strong> ${ticket.ClosedTimestamp || 'N/A'}` : ''}</div></div></div>${ticket.Status === 'Open' ? `<div class="mt-3 text-end"><button class="btn btn-success btn-sm close-ticket-btn" data-row-index="${ticket.RowIndex}"><i class="bi bi-check-circle"></i> ปิดเคส</button></div>` : ''}</div></div>`);
+                ticketList.insertAdjacentHTML('beforeend', `<div class="card mb-3"><div class="card-body"><div class="d-flex justify-content-between align-items-start mb-2"><span class="ticket-id">${ticket.CaseID}</span><span class="badge rounded-pill status-badge ${statusClass}">${ticket.Status}</span></div><div class="ticket-details"><p><strong>ชื่อผู้แจ้ง:</strong> ${ticket.SubmitterName}</p><p><strong>แผนก/ฝ่าย:</strong> ${ticket.Department}</p><p><strong>ประเภท:</strong> ${ticket.ProblemType}</p><p><strong>รายละเอียด:</strong></p><p class="text-secondary" style="white-space: pre-wrap;">${sanitizeHTML(ticket.ProblemDetails)}</p></div><div class="ticket-footer small mt-3 pt-3 border-top border-secondary-subtle"><div class="row"><div class="col-md-6 mb-1 mb-md-0"><i class="bi bi-calendar-plus"></i> <strong>เวลาแจ้ง:</strong> ${ticket.SubmissionTimestamp || 'N/A'}</div><div class="col-md-6">${ticket.Status === 'Closed' ? `<i class="bi bi-calendar-check"></i> <strong>เวลาปิดเคส:</strong> ${ticket.ClosedTimestamp || 'N/A'}` : ''}</div></div></div>${ticket.Status === 'Open' ? `<div class="mt-3 text-end"><button class="btn btn-success btn-sm close-ticket-btn" data-row-index="${ticket.RowIndex}"><i class="bi bi-check-circle"></i> ปิดเคส</button></div>` : ''}</div></div>`);
             });
-            document.querySelectorAll('.close-ticket-btn').forEach(b => b.addEventListener('click', e => postToAction('closeTicket', { rowIndex: e.target.closest('.close-ticket-btn').dataset.rowIndex })));
+            document.querySelectorAll('.close-ticket-btn').forEach(b => b.addEventListener('click', e => {
+                const rowIndex = e.target.closest('.close-ticket-btn').dataset.rowIndex;
+                showConfirm('คุณต้องการปิดเคสนี้ใช่หรือไม่?', () => postToAction('closeTicket', { rowIndex }));
+            }));
         }
         
         function renderUsers(users) {
@@ -182,7 +1007,7 @@
                 userTableBody.insertAdjacentHTML('beforeend', `
                     <tr>
                         <td>${user.username}</td>
-                        <td>${user.password}</td>
+                        <td>******</td>
                         <td class="text-end">
                             <button class="btn btn-sm btn-outline-warning me-2 edit-user-btn" data-row-index="${user.rowIndex}" data-username="${user.username}" data-password="${user.password}"><i class="bi bi-pencil"></i></button>
                             <button class="btn btn-sm btn-outline-danger delete-user-btn" data-row-index="${user.rowIndex}"><i class="bi bi-trash"></i></button>
@@ -207,6 +1032,7 @@
                 if (result.success) {
                     allTickets = result.data.tickets || [];
                     adminUsers = result.data.users || [];
+                    renderDashboard(allTickets);
                     renderTickets(allTickets);
                     renderUsers(adminUsers);
                 } else {
@@ -259,7 +1085,7 @@
                 adminDashboard.style.display = 'block';
                 loginBtn.style.display = 'none';
                 logoutBtn.style.display = 'block';
-                switchAdminView('admin-view-tickets');
+                switchAdminView('admin-view-dashboard'); // Default to dashboard
                 loginForm.reset();
                 document.getElementById('login-error').style.display = 'none';
             } else {
@@ -281,6 +1107,7 @@
             confirmCallback = null;
         });
 
+
         refreshBtn.addEventListener('click', fetchInitialData);
 
         helpdeskForm.addEventListener('submit', (e) => {
@@ -291,7 +1118,7 @@
                 problemType: document.getElementById('problemType').value,
                 problemDetails: document.getElementById('problemDetails').value
             };
-            postToAction('submitTicket', formData).then(() => helpdeskForm.reset());
+            postToAction('submitTicket', formData);
         });
         
         addUserForm.addEventListener('submit', (e) => {

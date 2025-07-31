@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="th" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Helpdesk - Admin Dashboard</title>
+
+    <!-- Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
+
+    <style>
+        :root {
+            --bs-body-font-family: 'Inter', 'Sarabun', sans-serif;
+            --bs-primary: #22c55e;
+            --bs-body-bg: #0f172a;
+            --bs-body-color: #e2e8f0;
+            --bs-border-color: rgba(148, 163, 184, 0.15);
+            --bs-card-bg: #1e293b;
+            --bs-input-bg: #334155;
+            --gradient-primary: linear-gradient(135deg, #22c55e 0%, #059669 100%);
+            --gradient-secondary: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            --shadow-primary: 0 10px 25px -5px rgba(34, 197, 94, 0.1), 0 8px 10px -6px rgba(34, 197, 94, 0.1);
+            --shadow-card: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        body { background: var(--bs-body-bg); color: var(--bs-body-color); }
+        .navbar { background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--bs-border-color); }
+        .main-container { max-width: 1200px; margin-top: 3rem; margin-bottom: 3rem; }
+        .card { 
+            background: var(--gradient-secondary); 
+            border: 1px solid var(--bs-border-color); 
+            border-radius: 1rem; 
+            box-shadow: var(--shadow-card);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-primary);
+        }
+        .card-header { background: rgba(34, 197, 94, 0.1); color: #f0fdf4; font-weight: 600; border-bottom: 1px solid rgba(34, 197, 94, 0.2); padding: 1.25rem 1.5rem; }
+        .dashboard-card { 
+            background: var(--gradient-secondary); 
+            border-radius: 1rem; 
+            padding: 1.5rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 1.5rem; 
+            border: 1px solid var(--bs-border-color); 
+            cursor: help;
+            transition: all 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-primary);
+        }
+        .dashboard-card .icon-circle { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; flex-shrink: 0; }
+        .dashboard-card .icon-circle.bg-warning-soft { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .dashboard-card .icon-circle.bg-primary-soft { background: rgba(34, 197, 94, 0.1); color: var(--bs-primary); }
+        .dashboard-card .icon-circle.bg-info-soft { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .dashboard-card .icon-circle.bg-danger-soft { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .dashboard-card .card-value { font-size: 2.25rem; font-weight: 700; }
+        .dashboard-card .card-label { font-size: 1rem; color: #94a3b8; }
+        .chart-container { height: 300px; }
+        .stats-list { list-style: none; padding-left: 0; margin-bottom: 0; }
+        .stats-list-item { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0.25rem; border-bottom: 1px solid var(--bs-border-color); font-size: 0.95rem; cursor: help; }
+        .stats-list-item:last-child { border-bottom: none; }
+        .stats-list-item .value { font-weight: 600; color: var(--bs-primary); }
+        .admin-nav { background: var(--gradient-secondary); padding: 1rem; border-radius: 1rem; margin-bottom: 2rem; border: 1px solid var(--bs-border-color); }
+        .admin-nav .nav-link { color: #cbd5e1; border-radius: 0.5rem; padding: 0.75rem 1.25rem; }
+        .admin-nav .nav-link.active { color: #ffffff; background: var(--gradient-primary); box-shadow: var(--shadow-primary); }
+        .loading-spinner { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1060; background: rgba(15, 23, 42, 0.8); padding: 2rem; border-radius: 1rem; backdrop-filter: blur(10px); }
+        .modal-content { background: var(--bs-card-bg); border: 1px solid var(--bs-border-color); border-radius: 1rem; }
+        .tippy-box[data-theme~='custom-dark'] { background-color: var(--bs-tertiary-bg); color: var(--bs-body-color); border: 1px solid var(--bs-border-color); font-family: 'Inter', 'Sarabun', sans-serif; border-radius: 0.5rem; box-shadow: var(--shadow-card); }
+        .tippy-box[data-theme~='custom-dark'][data-placement^='top'] > .tippy-arrow::before { border-top-color: var(--bs-tertiary-bg); }
+        .tippy-box[data-theme~='custom-dark'][data-placement^='bottom'] > .tippy-arrow::before { border-bottom-color: var(--bs-tertiary-bg); }
+        .tippy-content { padding: 0.5rem 0.75rem; }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .card, .dashboard-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="admin.html">
+                <img src="https://res.cloudinary.com/dqveqz8cy/image/upload/v1753430042/IT_Logo_ptq112.png" alt="IT Helpdesk Logo" style="height: 40px; margin-right: 12px;">
+                <span class="d-none d-sm-inline">Admin Dashboard</span>
+            </a>
+            <div class="ms-auto">
+                 <a href="index.html" id="back-to-form-btn" class="btn btn-outline-secondary" style="display: none;"><i class="bi bi-arrow-left-circle"></i> กลับหน้าฟอร์ม</a>
+                 <button id="logout-btn" class="btn btn-outline-danger" style="display: none;"><i class="bi bi-box-arrow-right"></i> ออกจากระบบ</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-container">
+        <!-- Admin Dashboard View -->
+        <div id="admin-dashboard" style="display: none;">
+            <ul class="nav nav-pills admin-nav">
+                <li class="nav-item"><a class="nav-link active" id="nav-dashboard" href="#"><i class="bi bi-grid-1x2-fill me-1"></i> ภาพรวม</a></li>
+                <li class="nav-item"><a class="nav-link" id="nav-tickets" href="#"><i class="bi bi-list-task me-1"></i> รายการปัญหา</a></li>
+                <li class="nav-item"><a class="nav-link" id="nav-users" href="#"><i class="bi bi-people me-1"></i> จัดการผู้ใช้</a></li>
+            </ul>
+            <div id="admin-content">
+                <div id="admin-view-dashboard">
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-3 col-md-6"><div class="dashboard-card h-100" data-tippy-content="จำนวนเคสทั้งหมดที่ยังคงอยู่ในสถานะ 'Open' และรอการแก้ไข"><div class="icon-circle bg-warning-soft"><i class="bi bi-folder2-open"></i></div><div><div id="open-cases-count" class="card-value">0</div><div class="card-label">เคสที่เปิดอยู่</div></div></div></div>
+                        <div class="col-lg-3 col-md-6"><div class="dashboard-card h-100" data-tippy-content="จำนวนเคสทั้งหมดที่ได้รับการแก้ไขเรียบร้อยแล้ว (สถานะ 'Closed')"><div class="icon-circle bg-primary-soft"><i class="bi bi-patch-check-fill"></i></div><div><div id="closed-cases-count" class="card-value">0</div><div class="card-label">เคสที่ปิดแล้ว</div></div></div></div>
+                        <div class="col-lg-3 col-md-6"><div class="dashboard-card h-100" data-tippy-content="จำนวนเคสทั้งหมดที่เคยแจ้งเข้ามาในระบบ"><div class="icon-circle bg-info-soft"><i class="bi bi-journal-text"></i></div><div><div id="total-cases-count" class="card-value">0</div><div class="card-label">เคสทั้งหมด</div></div></div></div>
+                        <div class="col-lg-3 col-md-6"><div class="dashboard-card h-100" data-tippy-content="ค่าเฉลี่ยของเวลาที่ใช้ในการปิดเคสทั้งหมด นับตั้งแต่เวลาแจ้งจนถึงเวลาปิด (หน่วยเป็นชั่วโมง)"><div class="icon-circle bg-danger-soft"><i class="bi bi-clock-history"></i></div><div><div id="avg-close-time" class="card-value">0.0</div><div class="card-label">เวลาเฉลี่ยในการปิดเคส (ชม.)</div></div></div></div>
+                    </div>
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-7"><div class="card h-100" data-tippy-content="กราฟเส้นแสดงจำนวนเคสที่ถูกแจ้งเข้ามาในแต่ละวัน ย้อนหลัง 7 วัน"><div class="card-header"><i class="bi bi-graph-up me-2"></i>แนวโน้มเคสรายวัน (7 วันล่าสุด)</div><div class="card-body"><div class="chart-container"><canvas id="dailyTrendChart"></canvas></div></div></div></div>
+                        <div class="col-lg-5"><div class="card h-100" data-tippy-content="แผนภูมิวงกลมแสดงสัดส่วนของปัญหาแต่ละประเภทจากเคสทั้งหมด"><div class="card-header"><i class="bi bi-pie-chart-fill me-2"></i>สัดส่วนประเภทปัญหา</div><div class="card-body"><div class="chart-container"><canvas id="problemTypeChart"></canvas></div></div></div></div>
+                    </div>
+                    <div class="card mb-4" data-tippy-content="กราฟแท่งเปรียบเทียบจำนวนเคสที่แจ้งเข้ามาในแต่ละเดือนของปีปัจจุบัน"><div class="card-header"><i class="bi bi-bar-chart-line-fill me-2"></i>ภาพรวมเคสรายเดือน</div><div class="card-body"><div class="chart-container"><canvas id="monthlyTrendChart"></canvas></div></div></div>
+                    <div class="row g-4">
+                        <div class="col-lg-4 col-md-6"><div class="card h-100"><div class="card-header" data-tippy-content="สรุปภาพรวมของเคสที่เกิดขึ้นในสัปดาห์ปัจจุบัน (นับวันจันทร์เป็นวันเริ่มต้น)"><i class="bi bi-calendar-week me-2"></i>สถิติสัปดาห์นี้</div><div class="card-body"><ul class="stats-list" id="weekly-stats-list"></ul></div></div></div>
+                        <div class="col-lg-4 col-md-6"><div class="card h-100"><div class="card-header" data-tippy-content="วิเคราะห์ประสิทธิภาพในการแก้ไขปัญหา โดยวัดระยะเวลาตั้งแต่แจ้งจนปิดเคส (หน่วยเป็นนาที)"><i class="bi bi-hourglass-split me-2"></i>สถิติเวลาในการแก้ไข (นาที)</div><div class="card-body"><ul class="stats-list" id="resolution-time-stats-list"></ul></div></div></div>
+                        <div class="col-lg-4 col-md-12"><div class="card h-100"><div class="card-header" data-tippy-content="แสดงรายชื่อ 5 อันดับแรกของผู้ใช้ที่แจ้งปัญหาเข้ามาบ่อยที่สุด"><i class="bi bi-person-check-fill me-2"></i>5 ผู้ที่แจ้งปัญหาบ่อยสุด</div><div class="card-body"><ul class="stats-list" id="top-submitters-list"></ul></div></div></div>
+                    </div>
+                </div>
+                <div id="admin-view-tickets" style="display: none;"><div class="card"><div class="card-header d-flex justify-content-between align-items-center"><span><i class="bi bi-list-task me-2"></i>รายการแจ้งปัญหาทั้งหมด</span><button id="refresh-btn" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-clockwise me-1"></i>รีเฟรช</button></div><div class="card-body"><div id="ticket-list"></div></div></div></div>
+                <div id="admin-view-users" style="display: none;"><div class="card"><div class="card-header"><i class="bi bi-people me-2"></i>จัดการผู้ใช้ระบบ</div><div class="card-body"><div class="mb-4"><form id="add-user-form" class="row g-3 align-items-end"><div class="col-sm-4"><label for="newUsername" class="form-label">Username</label><input type="text" class="form-control" id="newUsername" required></div><div class="col-sm-4"><label for="newPassword" class="form-label">Password</label><input type="text" class="form-control" id="newPassword" required></div><div class="col-sm-4"><button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-circle me-1"></i>เพิ่มผู้ใช้</button></div></form><small id="user-limit-msg" class="form-text text-muted mt-2"></small></div><div class="table-responsive"><table class="table table-hover"><thead><tr><th>Username</th><th>Password</th><th class="text-end">Actions</th></tr></thead><tbody id="user-table-body"></tbody></table></div></div></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals and Spinner -->
+    <div class="loading-spinner"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>
+    <div class="modal fade" id="alertModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="alertModalLabel"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="alertModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button></div></div></div></div>
+    <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>เจ้าหน้าที่ล็อกอิน</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="login-form"><div class="mb-3"><label class="form-label">Username</label><input type="text" class="form-control" id="adminUsernameInput" required></div><div class="mb-3"><label class="form-label">Password</label><input type="password" class="form-control" id="adminPasswordInput" required></div><div id="login-error" class="text-danger mt-2" style="display: none;"></div><button type="submit" class="btn btn-primary w-100">เข้าสู่ระบบ</button></form></div></div></div></div>
+    <div class="modal fade" id="confirmModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-question-circle me-2"></i>ยืนยันการดำเนินการ</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="confirmModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button><button type="button" class="btn btn-primary" id="confirmModalBtn">ยืนยัน</button></div></div></div></div>
+    <div class="modal fade" id="editUserModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>แก้ไขข้อมูลผู้ใช้</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="edit-user-form"><input type="hidden" id="editUserRowIndex"><div class="mb-3"><label class="form-label">Username</label><input type="text" class="form-control" id="editUsername" required></div><div class="mb-3"><label class="form-label">Password</label><input type="text" class="form-control" id="editPassword" required></div><button type="submit" class="btn btn-primary w-100">บันทึก</button></form></div></div></div></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYKnFhgUsIQqj6B09f27eg210oIxy1rcmgX3atEU5_j5j2y8G0NrU9L1qKKEFPOlH-0Q/exec';
+        let allTickets = [], adminUsers = [], problemTypeChart, dailyTrendChart, monthlyTrendChart;
+        let confirmCallback = null;
+
+        const DOMElements = {
+            adminDashboard: document.getElementById('admin-dashboard'),
+            ticketList: document.getElementById('ticket-list'),
+            loadingSpinner: document.querySelector('.loading-spinner'),
+            logoutBtn: document.getElementById('logout-btn'),
+            backToFormBtn: document.getElementById('back-to-form-btn'),
+            userTableBody: document.getElementById('user-table-body'),
+            addUserForm: document.getElementById('add-user-form'),
+            editUserForm: document.getElementById('edit-user-form'),
+            userLimitMsg: document.getElementById('user-limit-msg'),
+            openCasesCount: document.getElementById('open-cases-count'),
+            closedCasesCount: document.getElementById('closed-cases-count'),
+            totalCasesCount: document.getElementById('total-cases-count'),
+            avgCloseTime: document.getElementById('avg-close-time'),
+            problemTypeChartCanvas: document.getElementById('problemTypeChart'),
+            dailyTrendChartCanvas: document.getElementById('dailyTrendChart'),
+            monthlyTrendChartCanvas: document.getElementById('monthlyTrendChart'),
+            weeklyStatsList: document.getElementById('weekly-stats-list'),
+            resolutionTimeStatsList: document.getElementById('resolution-time-stats-list'),
+            topSubmittersList: document.getElementById('top-submitters-list'),
+            loginForm: document.getElementById('login-form'),
+            loginError: document.getElementById('login-error'),
+            adminContent: document.getElementById('admin-content'),
+            refreshBtn: document.getElementById('refresh-btn'),
+            confirmModalBtn: document.getElementById('confirmModalBtn'),
+        };
+        const Modals = {
+            alert: new bootstrap.Modal(document.getElementById('alertModal')),
+            login: new bootstrap.Modal(document.getElementById('loginModal')),
+            confirm: new bootstrap.Modal(document.getElementById('confirmModal')),
+            editUser: new bootstrap.Modal(document.getElementById('editUserModal')),
+        };
+
+        const showAlert = (message, isSuccess = true) => {
+            document.getElementById('alertModalLabel').textContent = isSuccess ? 'สำเร็จ!' : 'เกิดข้อผิดพลาด';
+            document.getElementById('alertModalBody').innerHTML = message;
+            Modals.alert.show();
+        };
+        const showConfirm = (message, callback) => {
+            document.getElementById('confirmModalBody').textContent = message;
+            confirmCallback = callback;
+            Modals.confirm.show();
+        };
+        const showLoading = (show) => { DOMElements.loadingSpinner.style.display = show ? 'flex' : 'none'; };
+        const switchAdminView = (targetId) => {
+            document.querySelectorAll('#admin-content > div').forEach(p => p.style.display = 'none');
+            document.getElementById(targetId).style.display = 'block';
+            document.querySelectorAll('.admin-nav .nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelector(`.admin-nav .nav-link[id="nav-${targetId.split('-')[2]}"]`).classList.add('active');
+            if (targetId === 'admin-view-dashboard') renderDashboard(allTickets);
+        };
+        const postToAction = async (action, data) => {
+            showLoading(true);
+            try {
+                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action, ...data }) });
+                showAlert('ดำเนินการเรียบร้อยแล้ว! ข้อมูลจะถูกรีเฟรชในไม่ช้า');
+                if (action.includes('User')) DOMElements.addUserForm.reset();
+                setTimeout(initializeApp, 2000);
+            } catch (error) { showAlert('เกิดข้อผิดพลาด: ' + error.message, false); } 
+            finally { showLoading(false); }
+        };
+        const parseThaiDateTime = (dateStr, timeStr) => {
+            if (!dateStr || !timeStr || dateStr.trim() === '' || timeStr.trim() === '') return null;
+            const dateParts = dateStr.trim().split('/');
+            if (dateParts.length !== 3) return null;
+            const timeParts = timeStr.trim().split(':');
+            if (timeParts.length < 2) return null;
+            const day = parseInt(dateParts[0], 10);
+            const month = parseInt(dateParts[1], 10) - 1;
+            const yearBE = parseInt(dateParts[2], 10);
+            if (isNaN(day) || isNaN(month) || isNaN(yearBE)) return null;
+            const yearAD = yearBE - 543;
+            const hours = parseInt(timeParts[0], 10) || 0;
+            const minutes = parseInt(timeParts[1], 10) || 0;
+            const seconds = parseInt(timeParts[2], 10) || 0;
+            if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) return null;
+            return new Date(yearAD, month, day, hours, minutes, seconds);
+        };
+        const initializeTooltips = () => tippy('[data-tippy-content]', { theme: 'custom-dark', animation: 'fade' });
+        const sanitizeHTML = (str) => {
+            if (!str) return '';
+            const temp = document.createElement('div');
+            temp.textContent = str;
+            return temp.innerHTML;
+        };
+
+        const renderDashboard = (tickets) => {
+            if (!tickets) return;
+            DOMElements.openCasesCount.textContent = tickets.filter(t => t.Status === 'Open').length;
+            DOMElements.closedCasesCount.textContent = tickets.filter(t => t.Status === 'Closed').length;
+            DOMElements.totalCasesCount.textContent = tickets.length;
+            const durations = tickets.filter(t => t.Status === 'Closed').map(t => (parseThaiDateTime(t.ClosedDate, t.ClosedTime) - parseThaiDateTime(t.SubmissionDate, t.SubmissionTime)) / 36e5).filter(d => d >= 0);
+            DOMElements.avgCloseTime.textContent = (durations.length ? durations.reduce((a, b) => a + b, 0) / durations.length : 0).toFixed(1);
+            
+            renderProblemTypeChart(tickets);
+            renderDailyTrendChart(tickets);
+            renderMonthlyTrendChart(tickets);
+            renderWeeklyStats(tickets);
+            renderResolutionTimeStats(tickets);
+            renderTopSubmitters(tickets);
+            initializeTooltips();
+        };
+
+        const renderProblemTypeChart = (tickets) => {
+            const typeCounts = tickets.reduce((acc, { ProblemType }) => { if(ProblemType) acc[ProblemType] = (acc[ProblemType] || 0) + 1; return acc; }, {});
+            if (problemTypeChart) problemTypeChart.destroy();
+            problemTypeChart = new Chart(DOMElements.problemTypeChartCanvas, { 
+                type: 'doughnut', 
+                data: { 
+                    labels: Object.keys(typeCounts), 
+                    datasets: [{ 
+                        data: Object.values(typeCounts), 
+                        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'], 
+                        borderColor: '#1e293b',
+                        borderWidth: 4,
+                        hoverOffset: 12
+                    }] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    cutout: '65%',
+                    plugins: { 
+                        legend: { position: 'bottom', labels: { color: '#e2e8f0', padding: 15, font: { size: 14 } } },
+                        tooltip: {
+                            backgroundColor: '#334155',
+                            titleColor: '#fff',
+                            bodyColor: '#e2e8f0',
+                            cornerRadius: 8,
+                            padding: 12
+                        }
+                    } 
+                } 
+            });
+        };
+
+        const renderDailyTrendChart = (tickets) => {
+            const dailyData = Array(7).fill(0);
+            const today = new Date();
+            const labels = [];
+            const thaiDays = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
+
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(today.getDate() - i);
+                labels.push(thaiDays[date.getDay()]);
+                dailyData[6-i] = tickets.filter(t => { 
+                    const subDate = parseThaiDateTime(t.SubmissionDate, t.SubmissionTime);
+                    return subDate && subDate.toDateString() === date.toDateString();
+                }).length;
+            }
+
+            if(dailyTrendChart) dailyTrendChart.destroy();
+            const ctx = DOMElements.dailyTrendChartCanvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(34, 197, 94, 0.5)');
+            gradient.addColorStop(1, 'rgba(34, 197, 94, 0)');
+
+            dailyTrendChart = new Chart(ctx, { 
+                type: 'line', 
+                data: { 
+                    labels: labels, 
+                    datasets: [{ 
+                        label: 'เคส', 
+                        data: dailyData, 
+                        borderColor: '#22c55e', 
+                        backgroundColor: gradient,
+                        fill: true, 
+                        tension: 0.4,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#22c55e',
+                        pointHoverRadius: 8,
+                        pointHoverBorderWidth: 2
+                    }] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { 
+                        y: { beginAtZero: true, ticks: { stepSize: 1, color: '#94a3b8' }, grid: { color: 'rgba(148, 163, 184, 0.15)' } },
+                        x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+                    },
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#334155',
+                            titleColor: '#fff',
+                            bodyColor: '#e2e8f0',
+                            cornerRadius: 8,
+                            padding: 12
+                        }
+                    } 
+                } 
+            });
+        };
+        
+        const renderMonthlyTrendChart = (tickets) => {
+            const labels = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+            const monthlyData = Array(12).fill(0);
+            const today = new Date();
+            tickets.forEach(t => { const d = parseThaiDateTime(t.SubmissionDate, t.SubmissionTime); if (d && d.getFullYear() === today.getFullYear()) monthlyData[d.getMonth()]++; });
+            
+            if(monthlyTrendChart) monthlyTrendChart.destroy();
+            const ctx = DOMElements.monthlyTrendChartCanvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(59, 130, 246, 0.8)');
+            gradient.addColorStop(1, 'rgba(59, 130, 246, 0.4)');
+
+            monthlyTrendChart = new Chart(ctx, { 
+                type: 'bar', 
+                data: { 
+                    labels, 
+                    datasets: [{ 
+                        label: 'เคส', 
+                        data: monthlyData, 
+                        backgroundColor: gradient,
+                        borderColor: '#3b82f6',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        hoverBackgroundColor: '#3b82f6'
+                    }] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { 
+                        y: { beginAtZero: true, ticks: { stepSize: 1, color: '#94a3b8' }, grid: { color: 'rgba(148, 163, 184, 0.15)' } },
+                        x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+                    },
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#334155',
+                            titleColor: '#fff',
+                            bodyColor: '#e2e8f0',
+                            cornerRadius: 8,
+                            padding: 12
+                        }
+                    } 
+                } 
+            });
+        };
+
+        const renderWeeklyStats = (tickets) => {
+            const todayMidnight = new Date(); todayMidnight.setHours(0,0,0,0);
+            const firstDayOfWeek = new Date(todayMidnight.setDate(todayMidnight.getDate() - todayMidnight.getDay() + (todayMidnight.getDay() === 0 ? -6 : 1) ));
+            const newThisWeek = tickets.filter(t => parseThaiDateTime(t.SubmissionDate, t.SubmissionTime) >= firstDayOfWeek).length;
+            const closedThisWeek = tickets.filter(t => t.Status === 'Closed' && parseThaiDateTime(t.ClosedDate, t.ClosedTime) >= firstDayOfWeek).length;
+            const overdue = tickets.filter(t => t.Status === 'Open' && parseThaiDateTime(t.SubmissionDate, t.SubmissionTime) < firstDayOfWeek).length;
+            const closedTickets = tickets.filter(t => t.Status === 'Closed');
+            let avgClosedPerWeek = 0;
+            if (closedTickets.length > 0) {
+                const firstTicketDate = tickets.map(t => parseThaiDateTime(t.SubmissionDate, t.SubmissionTime)).filter(d => d).sort((a, b) => a - b)[0];
+                if (firstTicketDate) { const weeks = (new Date() - firstTicketDate) / (6048e5); avgClosedPerWeek = weeks > 0 ? (closedTickets.length / weeks) : closedTickets.length; }
+            }
+            DOMElements.weeklyStatsList.innerHTML = `<li class="stats-list-item" data-tippy-content="จำนวนเคสใหม่ที่ถูกแจ้งเข้ามาตั้งแต่วันจันทร์ของสัปดาห์นี้"><span class="label">เคสใหม่ (สัปดาห์นี้)</span> <span class="value">${newThisWeek}</span></li><li class="stats-list-item" data-tippy-content="จำนวนเคสที่ถูกปิดไปตั้งแต่วันจันทร์ของสัปดาห์นี้"><span class="label">เคสปิด (สัปดาห์นี้)</span> <span class="value">${closedThisWeek}</span></li><li class="stats-list-item" data-tippy-content="ค่าเฉลี่ยของจำนวนเคสที่ปิดได้ในแต่ละสัปดาห์ คำนวณจาก (เคสที่ปิดทั้งหมด / จำนวนสัปดาห์ทั้งหมด)"><span class="label">เคสปิดเฉลี่ย/สัปดาห์</span> <span class="value">${avgClosedPerWeek.toFixed(1)}</span></li><li class="stats-list-item" data-tippy-content="จำนวนเคสจากสัปดาห์ก่อนๆ ที่ยังคงมีสถานะ 'Open' และถูกยกยอดมา"><span class="label">เคสค้าง (จากก่อนหน้า)</span> <span class="value">${overdue}</span></li>`;
+        };
+        const renderResolutionTimeStats = (tickets) => {
+            const resTimes = tickets.filter(t => t.Status === 'Closed').map(t => (parseThaiDateTime(t.ClosedDate, t.ClosedTime) - parseThaiDateTime(t.SubmissionDate, t.SubmissionTime)) / 60000).filter(d => d >= 0);
+            DOMElements.resolutionTimeStatsList.innerHTML = resTimes.length ? `<li class="stats-list-item" data-tippy-content="เคสที่ใช้เวลาในการแก้ไขน้อยที่สุด"><span class="label">เร็วที่สุด (Min)</span> <span class="value">${Math.min(...resTimes).toFixed(1)}</span></li><li class="stats-list-item" data-tippy-content="ค่าเฉลี่ยของเวลาที่ใช้ในการปิดเคสทั้งหมด"><span class="label">เฉลี่ย (Avg)</span> <span class="value">${(resTimes.reduce((a, b) => a + b, 0) / resTimes.length).toFixed(1)}</span></li><li class="stats-list-item" data-tippy-content="เคสที่ใช้เวลาในการแก้ไขนานที่สุด"><span class="label">ช้าที่สุด (Max)</span> <span class="value">${Math.max(...resTimes).toFixed(1)}</span></li>` : `<li class="stats-list-item" data-tippy-content="ยังไม่มีข้อมูลเคสที่ถูกปิด">...</li>`;
+        };
+        const renderTopSubmitters = (tickets) => {
+            const counts = tickets.reduce((acc, { SubmitterName }) => { if(SubmitterName) acc[SubmitterName] = (acc[SubmitterName] || 0) + 1; return acc; }, {});
+            const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            DOMElements.topSubmittersList.innerHTML = sorted.length ? sorted.map(([name, count]) => `<li class="stats-list-item"><span class="label">${name}</span><span class="value">${count}</span></li>`).join('') : `<li class="stats-list-item">ไม่มีข้อมูล</li>`;
+        };
+
+        const renderTickets = (tickets) => {
+            const ticketListEl = DOMElements.ticketList;
+            ticketListEl.innerHTML = '';
+            if (!tickets || tickets.length === 0) {
+                ticketListEl.innerHTML = '<p class="text-center text-muted p-5">ยังไม่มีรายการแจ้งปัญหา</p>';
+                return;
+            }
+            tickets.sort((a, b) => {
+                if (a.Status === 'Open' && b.Status !== 'Open') return -1;
+                if (a.Status !== 'Open' && b.Status === 'Open') return 1;
+                return b.RowIndex - a.RowIndex;
+            }).forEach(ticket => {
+                const statusClass = ticket.Status === 'Open' ? 'bg-warning' : 'bg-success';
+                ticketListEl.insertAdjacentHTML('beforeend', `
+                <div class="card mb-3"><div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2"><span class="ticket-id">${sanitizeHTML(ticket.CaseID)}</span><span class="badge rounded-pill status-badge ${statusClass}">${sanitizeHTML(ticket.Status)}</span></div>
+                    <div class="ticket-details mt-2"><p class="mb-1"><strong>ผู้แจ้ง:</strong> ${sanitizeHTML(ticket.SubmitterName)}</p><p class="mb-1"><strong>แผนก:</strong> ${sanitizeHTML(ticket.Department)}</p><p class="mb-1"><strong>ประเภท:</strong> ${sanitizeHTML(ticket.ProblemType)}</p><p class="mb-1"><strong>รายละเอียด:</strong></p><p class="text-white-50" style="white-space: pre-wrap;">${sanitizeHTML(ticket.ProblemDetails)}</p></div>
+                    <div class="ticket-footer small mt-3 pt-3 border-top border-secondary-subtle">แจ้งเมื่อ: ${sanitizeHTML(ticket.SubmissionDate) || 'N/A'} ${sanitizeHTML(ticket.SubmissionTime) || 'N/A'}${ticket.Status === 'Closed' ? ` | ปิดเมื่อ: ${sanitizeHTML(ticket.ClosedDate) || 'N/A'} ${sanitizeHTML(ticket.ClosedTime) || 'N/A'}` : ''}</div>
+                    ${ticket.Status === 'Open' ? `<div class="mt-3 text-end"><button class="btn btn-success btn-sm close-ticket-btn" data-row-index="${ticket.RowIndex}"><i class="bi bi-check-circle"></i> ปิดเคส</button></div>` : ''}
+                </div></div>`);
+            });
+        };
+        const renderUsers = (users) => {
+            const userTableBodyEl = DOMElements.userTableBody;
+            userTableBodyEl.innerHTML = '';
+            if (!users || users.length === 0) return;
+            users.forEach(user => {
+                userTableBodyEl.insertAdjacentHTML('beforeend', `
+                    <tr><td>${sanitizeHTML(user.username)}</td><td>******</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-warning me-2 edit-user-btn" data-row-index="${user.rowIndex}" data-username="${sanitizeHTML(user.username)}" data-password="${sanitizeHTML(user.password)}"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger delete-user-btn" data-row-index="${user.rowIndex}"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>`);
+            });
+            const userCount = users.length;
+            DOMElements.userLimitMsg.textContent = `จำนวนผู้ใช้: ${userCount}/5`;
+            DOMElements.addUserForm.querySelector('button').disabled = userCount >= 5;
+        };
+
+        async function initializeApp() {
+            showLoading(true);
+            try {
+                const response = await fetch(`${SCRIPT_URL}?v=${new Date().getTime()}`);
+                const result = await response.json();
+                if (result.success) {
+                    allTickets = (result.data.tickets || []).filter(t => t.CaseID && t.CaseID.trim() !== '');
+                    adminUsers = result.data.users || [];
+                    
+                    if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                        showDashboard();
+                    } else {
+                        Modals.login.show();
+                    }
+                } else { showAlert('ไม่สามารถโหลดข้อมูลเริ่มต้นได้', false); }
+            } catch (error) { showAlert('เกิดข้อผิดพลาดในการเชื่อมต่อ', false); }
+            finally { showLoading(false); }
+        }
+
+        function showDashboard() {
+            DOMElements.adminDashboard.style.display = 'block';
+            DOMElements.logoutBtn.style.display = 'inline-flex';
+            DOMElements.backToFormBtn.style.display = 'inline-flex';
+            renderDashboard(allTickets);
+            renderTickets(allTickets);
+            renderUsers(adminUsers);
+        }
+
+        DOMElements.logoutBtn.addEventListener('click', () => {
+            sessionStorage.removeItem('isLoggedIn');
+            DOMElements.adminDashboard.style.display = 'none';
+            DOMElements.logoutBtn.style.display = 'none';
+            DOMElements.backToFormBtn.style.display = 'none';
+            Modals.login.show();
+        });
+
+        DOMElements.loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('adminUsernameInput').value;
+            const password = document.getElementById('adminPasswordInput').value;
+            const foundUser = adminUsers.find(u => u.username === username && u.password === password);
+            if (foundUser) {
+                sessionStorage.setItem('isLoggedIn', 'true');
+                Modals.login.hide();
+                showDashboard();
+            } else {
+                DOMElements.loginError.textContent = 'Username หรือ Password ไม่ถูกต้อง!';
+                DOMElements.loginError.style.display = 'block';
+            }
+        });
+
+        document.querySelectorAll('.admin-nav .nav-link').forEach(l => l.addEventListener('click', (e) => { e.preventDefault(); switchAdminView(`admin-view-${e.target.id.split('-')[1]}`); }));
+        DOMElements.confirmModalBtn.addEventListener('click', () => { if(confirmCallback) confirmCallback(); Modals.confirm.hide(); });
+        DOMElements.refreshBtn.addEventListener('click', initializeApp);
+        
+        DOMElements.adminContent.addEventListener('click', (e) => {
+            const closeBtn = e.target.closest('.close-ticket-btn');
+            const editBtn = e.target.closest('.edit-user-btn');
+            const deleteBtn = e.target.closest('.delete-user-btn');
+
+            if (closeBtn) showConfirm('คุณต้องการปิดเคสนี้ใช่หรือไม่?', () => postToAction('closeTicket', { rowIndex: closeBtn.dataset.rowIndex }));
+            
+            if (editBtn) {
+                document.getElementById('editUserRowIndex').value = editBtn.dataset.rowIndex;
+                document.getElementById('editUsername').value = editBtn.dataset.username;
+                document.getElementById('editPassword').value = editBtn.dataset.password;
+                Modals.editUser.show();
+            }
+            if (deleteBtn) {
+                if (adminUsers.length <= 1) return showAlert('ไม่สามารถลบผู้ใช้คนสุดท้ายได้', false);
+                showConfirm('คุณต้องการลบผู้ใช้นี้ใช่หรือไม่?', () => postToAction('deleteUser', { rowIndex: deleteBtn.dataset.rowIndex }));
+            }
+        });
+
+        DOMElements.addUserForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            postToAction('addUser', {
+                username: document.getElementById('newUsername').value,
+                password: document.getElementById('newPassword').value
+            });
+        });
+        DOMElements.editUserForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            postToAction('editUser', {
+                rowIndex: document.getElementById('editUserRowIndex').value,
+                username: document.getElementById('editUsername').value,
+                password: document.getElementById('editPassword').value
+            }).then(() => Modals.editUser.hide());
+        });
+        
+        initializeApp();
+    });
+    </script>
+</body>
+</html>

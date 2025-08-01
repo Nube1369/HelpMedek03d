@@ -18,7 +18,7 @@
             --bs-body-font-family: 'Inter', 'Sarabun', sans-serif;
             --bs-primary: #22c55e;
             --bs-primary-dark: #16a34a;
-            --bs-body-bg: #020617; /* New background base color */
+            --bs-body-bg: #0f172a;
             --bs-body-color: #d1d5db; 
             --bs-border-color: rgba(107, 114, 128, 0.2); 
             --bs-card-bg: #1f2937; 
@@ -37,13 +37,19 @@
 
         body { 
             background-color: var(--bs-body-bg);
-            background-image: 
-                radial-gradient(at 10% 20%, hsla(260, 80%, 30%, 0.2) 0px, transparent 50%),
-                radial-gradient(at 80% 15%, hsla(210, 80%, 40%, 0.2) 0px, transparent 50%),
-                radial-gradient(at 90% 85%, hsla(180, 80%, 35%, 0.15) 0px, transparent 50%),
-                radial-gradient(at 15% 80%, hsla(320, 80%, 40%, 0.15) 0px, transparent 50%);
+            background-image: radial-gradient(at 20% 20%, hsla(212,95%,60%,0.15) 0px, transparent 50%), 
+                              radial-gradient(at 80% 20%, hsla(160,95%,50%,0.15) 0px, transparent 50%),
+                              radial-gradient(at 50% 80%, hsla(280,95%,60%,0.15) 0px, transparent 50%);
             color: var(--bs-body-color); 
+            transition: background 0.5s ease-in-out;
         }
+
+        body.login-active-bg {
+            background: linear-gradient(-45deg, #020617, #1e3a8a, #312e71, #115e59);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+        }
+
         .navbar { background: rgba(30, 41, 59, 0.75); backdrop-filter: blur(10px); border-bottom: 1px solid var(--bs-border-color); }
         .main-container { max-width: 1200px; margin-top: 3rem; margin-bottom: 3rem; }
         .card { 
@@ -145,7 +151,6 @@
 
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container-fluid">
-            <!-- ***** MODIFIED: Changed <a> to <div> to remove link ***** -->
             <div class="navbar-brand fw-bold d-flex align-items-center">
                 <img src="https://res.cloudinary.com/dqveqz8cy/image/upload/v1753430042/IT_Logo_ptq112.png" alt="IT Helpdesk Logo" style="height: 40px; margin-right: 12px;">
             </div>
@@ -209,6 +214,8 @@
         let allTickets = [], adminUsers = [], problemTypeChart, dailyTrendChart, monthlyTrendChart;
         let confirmCallback = null;
         let pollingIntervalId = null;
+        // ***** NEW: Variable to track latest data for performance *****
+        let lastKnownRow = 0;
 
         const DOMElements = {
             adminDashboard: document.getElementById('admin-dashboard'),
@@ -627,6 +634,7 @@
             DOMElements.addUserForm.querySelector('button').disabled = userCount >= 5;
         };
 
+        // ***** MODIFIED for Performance *****
         async function initializeApp(isSilent = false) {
             const token = sessionStorage.getItem('authToken');
             if (!token) {
@@ -641,6 +649,11 @@
                 if (result.success) {
                     allTickets = (result.data.tickets || []).filter(t => t.CaseID && t.CaseID.trim() !== '');
                     adminUsers = result.data.users || [];
+                    
+                    if (allTickets.length > 0) {
+                        lastKnownRow = Math.max(...allTickets.map(t => parseInt(t.RowIndex, 10) || 0));
+                    }
+
                     showDashboard();
                 } else if (!isSilent) { 
                     showAlert('ไม่สามารถโหลดข้อมูลเริ่มต้นได้: ' + (result.message || 'Unknown error'), false); 
@@ -653,6 +666,32 @@
             }
         }
 
+        // ***** NEW FUNCTION for Performance *****
+        async function fetchUpdates() {
+            if (lastKnownRow === 0) return; // Don't poll if we have no initial data
+
+            try {
+                const response = await fetch(`${SCRIPT_URL}?lastRow=${lastKnownRow}&v=${new Date().getTime()}`);
+                const result = await response.json();
+                if (result.success && result.data.tickets && result.data.tickets.length > 0) {
+                    const newTickets = result.data.tickets;
+                    
+                    allTickets = allTickets.concat(newTickets);
+                    
+                    const newMaxRow = Math.max(...newTickets.map(t => parseInt(t.RowIndex, 10) || 0));
+                    if (newMaxRow > lastKnownRow) {
+                        lastKnownRow = newMaxRow;
+                    }
+
+                    // Re-render the UI with fresh data
+                    renderDashboard(allTickets);
+                    renderTickets(allTickets);
+                }
+            } catch (error) {
+                console.error("Polling for updates failed:", error);
+            }
+        }
+
         function showDashboard() {
             DOMElements.adminDashboard.style.display = 'block';
             DOMElements.logoutBtn.style.display = 'inline-flex';
@@ -662,9 +701,10 @@
             startPolling();
         }
 
+        // ***** MODIFIED for Performance *****
         function startPolling() {
             if (pollingIntervalId) clearInterval(pollingIntervalId);
-            pollingIntervalId = setInterval(() => initializeApp(true), 30000);
+            pollingIntervalId = setInterval(fetchUpdates, 30000); // Poll for updates only
         }
 
         function handleLogout() {
@@ -776,6 +816,14 @@
                 username: document.getElementById('editUsername').value,
                 password: document.getElementById('editPassword').value
             }).then(() => Modals.editUser.hide());
+        });
+        
+        const loginModalEl = document.getElementById('loginModal');
+        loginModalEl.addEventListener('show.bs.modal', () => {
+            document.body.classList.add('login-active-bg');
+        });
+        loginModalEl.addEventListener('hide.bs.modal', () => {
+            document.body.classList.remove('login-active-bg');
         });
         
         initializeApp();

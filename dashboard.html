@@ -29,27 +29,73 @@
             --shadow-card: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         }
         
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
         body { 
-            background-color: var(--bs-body-bg);
-            background-image: radial-gradient(at 20% 20%, hsla(212,95%,60%,0.15) 0px, transparent 50%), 
-                              radial-gradient(at 80% 20%, hsla(160,95%,50%,0.15) 0px, transparent 50%),
-                              radial-gradient(at 50% 80%, hsla(280,95%,60%,0.15) 0px, transparent 50%);
+            background-image: none;
+            background-color: #030712;
             color: var(--bs-body-color); 
-            transition: background 0.5s ease-in-out;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        body.login-active-bg {
-            background: linear-gradient(-45deg, #020617, #1e3a8a, #312e71, #115e59);
-            background-size: 400% 400%;
-            animation: gradientAnimation 15s ease infinite;
+        @keyframes move-stars {
+            from { transform: translateY(0px); }
+            to   { transform: translateY(-2000px); }
         }
 
+        .stars-container {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 300%;
+            background-image: 
+                radial-gradient(1px 1px at 20px 30px, #eee, transparent),
+                radial-gradient(1px 1px at 40px 70px, #fff, transparent),
+                radial-gradient(1px 1px at 50px 160px, #ddd, transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+                radial-gradient(1px 1px at 130px 80px, #fff, transparent),
+                radial-gradient(1px 1px at 160px 120px, #ddd, transparent),
+                radial-gradient(2px 2px at 20% 20%, #fff, transparent),
+                radial-gradient(2px 2px at 40% 30%, #fff, transparent),
+                radial-gradient(2px 2px at 60% 80%, #fff, transparent),
+                radial-gradient(2px 2px at 80% 50%, #fff, transparent),
+                radial-gradient(2px 2px at 95% 90%, #fff, transparent),
+                radial-gradient(3px 3px at 5% 95%, #fff, transparent),
+                radial-gradient(3px 3px at 90% 10%, #fff, transparent);
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: move-stars 200s linear infinite;
+            z-index: -1;
+        }
+        
+        #login-logo-container {
+            display: none; 
+            position: fixed;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1056; 
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        #login-logo-container img {
+            width: 100px;
+            height: auto;
+            opacity: 0.8;
+            filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.4));
+        }
+        
+        body.login-active-bg #login-logo-container {
+            display: flex; 
+        }
+
+        body.login-active-bg .navbar {
+            display: none; 
+        }
+        
         .navbar { background: rgba(30, 41, 59, 0.75); backdrop-filter: blur(10px); border-bottom: 1px solid var(--bs-border-color); }
         .main-container { max-width: 1200px; margin-top: 3rem; margin-bottom: 3rem; }
         .card { 
@@ -103,9 +149,68 @@
         .admin-nav { background: var(--gradient-secondary); padding: 1rem; border-radius: 1rem; margin-bottom: 2rem; border: 1px solid var(--bs-border-color); }
         .admin-nav .nav-link { color: #cbd5e1; border-radius: 0.5rem; padding: 0.75rem 1.25rem; }
         .admin-nav .nav-link.active { color: #ffffff; background: var(--gradient-primary); box-shadow: var(--shadow-primary); }
-        .loading-spinner { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1060; background: rgba(17, 24, 39, 0.8); padding: 2rem; border-radius: 1rem; backdrop-filter: blur(10px); }
         
+        /* ***** MODIFIED: Loading Spinner Position & Style ***** */
+        .loading-spinner { 
+            display: none; 
+            position: fixed; 
+            top: auto;
+            bottom: 2rem;
+            left: 50%; 
+            transform: translateX(-50%);
+            z-index: 1060; 
+            background: transparent;
+            padding: 0;
+        }
+
+        .loader {
+            width: fit-content;
+            font-weight: bold;
+            font-family: monospace;
+            white-space: pre;
+            font-size: 30px;
+            line-height: 1.2em;
+            height:1.2em;
+            overflow: hidden;
+            color: var(--bs-primary);
+        }
+        .loader:before {
+            content:"Loading...\A⌰oading...\A⌰⍜ading...\A⌰⍜⏃ding...\A⌰⍜⏃⎅ing...\A⌰⍜⏃⎅⟟ng...\A⌰⍜⏃⎅⟟⋏g...\A⌰⍜⏃⎅⟟⋏☌...\A⌰⍜⏃⎅⟟⋏☌⟒..\A⌰⍜⏃⎅⟟⋏☌⟒⏁.\A⌰⍜⏃⎅⟟⋏☌⟒⏁⋔";	
+            white-space: pre;
+            display: inline-block;
+            animation: l39 1s infinite steps(11) alternate;
+        }
+
+        @keyframes l39 {
+            100%{transform: translateY(-100%)}
+        }
+
         .modal-content { background: var(--bs-card-bg); border: 1px solid var(--bs-border-color); border-radius: 1rem; }
+        
+        #loginModal .modal-content {
+            background: rgba(31, 41, 55, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.25rem; 
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2); 
+        }
+
+        #loginModal .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #loginModal .form-control {
+            background: rgba(55, 65, 81, 0.7); 
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        #loginModal .form-control:focus {
+            background: rgba(75, 85, 99, 0.8);
+            border-color: var(--bs-primary);
+            box-shadow: 0 0 0 0.2rem rgba(34, 197, 94, 0.25);
+        }
+
         .modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--bs-border-color); }
         .modal-body { padding: 1.5rem; }
         .modal-body .form-control { background: var(--bs-input-bg); border-radius: 0.5rem; }
@@ -129,6 +234,10 @@
         .tippy-box[data-theme~='custom-dark'][data-placement^='bottom'] > .tippy-arrow::before { border-bottom-color: var(--bs-card-bg); }
         .tippy-content { padding: 0.5rem 0.75rem; }
         
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -148,6 +257,11 @@
     </style>
 </head>
 <body>
+    <div class="stars-container"></div>
+
+    <div id="login-logo-container">
+        <img src="https://res.cloudinary.com/dqveqz8cy/image/upload/v1753430042/IT_Logo_ptq112.png" alt="IT Helpdesk Logo">
+    </div>
 
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container-fluid">
@@ -193,9 +307,13 @@
     </div>
 
     <!-- Modals and Spinner -->
-    <div class="loading-spinner"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>
+    <div class="loading-spinner">
+        <div class="loader"></div>
+    </div>
+
     <div class="modal fade" id="alertModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="alertModalLabel"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="alertModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button></div></div></div></div>
-    <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>เจ้าหน้าที่ล็อกอิน</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="login-form"><div class="mb-3"><label class="form-label">Username</label><input type="text" class="form-control" id="adminUsernameInput" required></div><div class="mb-3"><label class="form-label">Password</label><input type="password" class="form-control" id="adminPasswordInput" required></div><div id="login-error" class="text-danger mt-2" style="display: none;"></div><button type="submit" class="btn btn-primary w-100">เข้าสู่ระบบ</button></form></div></div></div></div>
+    
+    <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>Authorized Login</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="login-form"><div class="mb-3"><label class="form-label">Username</label><input type="text" class="form-control" id="adminUsernameInput" required></div><div class="mb-3"><label class="form-label">Password</label><input type="password" class="form-control" id="adminPasswordInput" required></div><div id="login-error" class="text-danger mt-2" style="display: none;"></div><button type="submit" class="btn btn-primary w-100">Sign In</button></form></div></div></div></div>
     
     <div class="modal fade" id="resolutionModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>บันทึกการแก้ไข (ปิดเคส)</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="resolution-form"><input type="hidden" id="resolutionRowIndex"><div class="mb-3"><label for="resolutionComment" class="form-label">หมายเหตุการแก้ไข (Resolution Comment)</label><textarea class="form-control" id="resolutionComment" rows="4" placeholder="ระบุวิธีการแก้ไขปัญหาโดยสรุป..."></textarea></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button><button type="submit" class="btn btn-primary">ยืนยันการปิดเคส</button></div></form></div></div></div></div>
     
@@ -214,7 +332,6 @@
         let allTickets = [], adminUsers = [], problemTypeChart, dailyTrendChart, monthlyTrendChart;
         let confirmCallback = null;
         let pollingIntervalId = null;
-        // ***** NEW: Variable to track latest data for performance *****
         let lastKnownRow = 0;
 
         const DOMElements = {
@@ -252,7 +369,7 @@
         };
 
         const showAlert = (message, isSuccess = true) => {
-            document.getElementById('alertModalLabel').textContent = isSuccess ? 'สำเร็จ!' : 'เกิดข้อผิดพลาด';
+            document.getElementById('alertModalLabel').textContent = isSuccess ? 'Success!' : 'Error';
             document.getElementById('alertModalBody').innerHTML = message;
             Modals.alert.show();
         };
@@ -283,7 +400,7 @@
             showLoading(true);
             const token = sessionStorage.getItem('authToken');
             if (!token && action !== 'login') {
-                showAlert('Session หมดอายุ กรุณาล็อกอินใหม่อีกครั้ง', false);
+                showAlert('Session expired. Please log in again.', false);
                 handleLogout();
                 return;
             }
@@ -297,18 +414,18 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    showAlert('ดำเนินการเรียบร้อยแล้ว');
+                    showAlert('Operation successful.');
                     if (action.includes('User')) DOMElements.addUserForm.reset();
                     if (action === 'closeTicket') DOMElements.resolutionForm.reset();
                     setTimeout(() => initializeApp(false), 1500); 
                 } else {
-                    showAlert('เกิดข้อผิดพลาด: ' + result.message, false);
+                    showAlert('Error: ' + result.message, false);
                     if (result.message === "Unauthorized.") {
                         handleLogout();
                     }
                 }
             } catch (error) { 
-                showAlert('เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message, false); 
+                showAlert('Connection Error: ' + error.message, false); 
             } 
             finally { 
                 showLoading(false); 
@@ -341,19 +458,19 @@
         };
         const formatDuration = (totalMinutes) => {
             if (isNaN(totalMinutes) || totalMinutes < 0) return 'N/A';
-            if (totalMinutes < 1) return `${(totalMinutes * 60).toFixed(0)} วินาที`;
-            if (totalMinutes < 60) return `${totalMinutes.toFixed(0)} นาที`;
+            if (totalMinutes < 1) return `${(totalMinutes * 60).toFixed(0)} sec`;
+            if (totalMinutes < 60) return `${totalMinutes.toFixed(0)} min`;
             
             const days = Math.floor(totalMinutes / 1440);
             const hours = Math.floor((totalMinutes % 1440) / 60);
             const minutes = Math.round(totalMinutes % 60);
 
             let result = '';
-            if (days > 0) result += `${days} วัน `;
-            if (hours > 0) result += `${hours} ชม. `;
-            if (minutes > 0 && days === 0) result += `${minutes} นาที`;
+            if (days > 0) result += `${days}d `;
+            if (hours > 0) result += `${hours}h `;
+            if (minutes > 0 && days === 0) result += `${minutes}m`;
 
-            return result.trim() || '0 นาที';
+            return result.trim() || '0 min';
         };
 
         const renderDashboard = (tickets) => {
@@ -420,7 +537,7 @@
             const dailyData = Array(7).fill(0);
             const today = new Date();
             const labels = [];
-            const thaiDays = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
+            const thaiDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
             for (let i = 6; i >= 0; i--) {
                 const date = new Date();
@@ -443,7 +560,7 @@
                 data: { 
                     labels: labels, 
                     datasets: [{ 
-                        label: 'เคส', 
+                        label: 'Cases', 
                         data: dailyData, 
                         borderColor: '#22c55e', 
                         backgroundColor: gradient,
@@ -471,7 +588,7 @@
         };
         
         const renderMonthlyTrendChart = (tickets) => {
-            const labels = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+            const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const monthlyData = Array(12).fill(0);
             const today = new Date();
             tickets.forEach(t => { const d = parseThaiDateTime(t.SubmissionDate, t.SubmissionTime); if (d && d.getFullYear() === today.getFullYear()) monthlyData[d.getMonth()]++; });
@@ -487,7 +604,7 @@
                 data: { 
                     labels, 
                     datasets: [{ 
-                        label: 'เคส', 
+                        label: 'Cases', 
                         data: monthlyData, 
                         backgroundColor: gradient,
                         borderColor: '#3b82f6',
@@ -543,15 +660,15 @@
                 }
             }
 
-            DOMElements.weeklyStatsList.innerHTML = `<li class="stats-list-item" data-tippy-content="จำนวนเคสใหม่ที่ถูกแจ้งเข้ามาตั้งแต่วันจันทร์ของสัปดาห์นี้"><span class="label">เคสใหม่ (สัปดาห์นี้)</span> <span class="value">${newThisWeek} เคส</span></li><li class="stats-list-item" data-tippy-content="จำนวนเคสที่ถูกปิดไปตั้งแต่วันจันทร์ของสัปดาห์นี้"><span class="label">เคสปิด (สัปดาห์นี้)</span> <span class="value">${closedThisWeek} เคส</span></li><li class="stats-list-item" data-tippy-content="ค่าเฉลี่ยของจำนวนเคสที่ปิดได้ต่อวันทำการ (จ-ศ) คำนวณจาก (เคสที่ปิดทั้งหมด / จำนวนวันทำการทั้งหมด)"><span class="label">เคสปิดเฉลี่ย/วันทำการ</span> <span class="value">${avgClosedPerDay.toFixed(1)} เคส</span></li><li class="stats-list-item" data-tippy-content="จำนวนเคสจากสัปดาห์ก่อนๆ ที่ยังคงมีสถานะ 'Open' และถูกยกยอดมา"><span class="label">เคสค้าง (จากก่อนหน้า)</span> <span class="value">${overdue} เคส</span></li>`;
+            DOMElements.weeklyStatsList.innerHTML = `<li class="stats-list-item" data-tippy-content="New cases submitted since Monday this week"><span class="label">New (This Week)</span> <span class="value">${newThisWeek} cases</span></li><li class="stats-list-item" data-tippy-content="Cases closed since Monday this week"><span class="label">Closed (This Week)</span> <span class="value">${closedThisWeek} cases</span></li><li class="stats-list-item" data-tippy-content="Average cases closed per working day (Mon-Fri)"><span class="label">Avg. Closed/Workday</span> <span class="value">${avgClosedPerDay.toFixed(1)} cases</span></li><li class="stats-list-item" data-tippy-content="Open cases carried over from previous weeks"><span class="label">Overdue Cases</span> <span class="value">${overdue} cases</span></li>`;
         };
         const renderResolutionTimeStats = (tickets) => {
             const resTimes = tickets.filter(t => t.Status === 'Closed').map(t => (parseThaiDateTime(t.ClosedDate, t.ClosedTime) - parseThaiDateTime(t.SubmissionDate, t.SubmissionTime)) / 60000).filter(d => d >= 0);
             if (resTimes.length === 0) {
-                DOMElements.resolutionTimeStatsList.innerHTML = `<li class="stats-list-item" data-tippy-content="ยังไม่มีข้อมูลเคสที่ถูกปิด"><span class="label">เร็วที่สุด (Min)</span> <span class="value">N/A</span></li><li class="stats-list-item" data-tippy-content="ยังไม่มีข้อมูลเคสที่ถูกปิด"><span class="label">เฉลี่ย (Avg)</span> <span class="value">N/A</span></li><li class="stats-list-item" data-tippy-content="ยังไม่มีข้อมูลเคสที่ถูกปิด"><span class="label">ช้าที่สุด (Max)</span> <span class="value">N/A</span></li>`;
+                DOMElements.resolutionTimeStatsList.innerHTML = `<li class="stats-list-item" data-tippy-content="No closed ticket data available"><span class="label">Fastest (Min)</span> <span class="value">N/A</span></li><li class="stats-list-item" data-tippy-content="No closed ticket data available"><span class="label">Average (Avg)</span> <span class="value">N/A</span></li><li class="stats-list-item" data-tippy-content="No closed ticket data available"><span class="label">Slowest (Max)</span> <span class="value">N/A</span></li>`;
                 return;
             }
-            DOMElements.resolutionTimeStatsList.innerHTML = `<li class="stats-list-item" data-tippy-content="เคสที่ใช้เวลาในการแก้ไขน้อยที่สุด"><span class="label">เร็วที่สุด (Min)</span> <span class="value">${formatDuration(Math.min(...resTimes))}</span></li><li class="stats-list-item" data-tippy-content="ค่าเฉลี่ยของเวลาที่ใช้ในการปิดเคสทั้งหมด"><span class="label">เฉลี่ย (Avg)</span> <span class="value">${formatDuration(resTimes.reduce((a, b) => a + b, 0) / resTimes.length)}</span></li><li class="stats-list-item" data-tippy-content="เคสที่ใช้เวลาในการแก้ไขนานที่สุด"><span class="label">ช้าที่สุด (Max)</span> <span class="value">${formatDuration(Math.max(...resTimes))}</span></li>`;
+            DOMElements.resolutionTimeStatsList.innerHTML = `<li class="stats-list-item" data-tippy-content="The shortest time taken to resolve a case"><span class="label">Fastest (Min)</span> <span class="value">${formatDuration(Math.min(...resTimes))}</span></li><li class="stats-list-item" data-tippy-content="The average time taken to resolve all cases"><span class="label">Average (Avg)</span> <span class="value">${formatDuration(resTimes.reduce((a, b) => a + b, 0) / resTimes.length)}</span></li><li class="stats-list-item" data-tippy-content="The longest time taken to resolve a case"><span class="label">Slowest (Max)</span> <span class="value">${formatDuration(Math.max(...resTimes))}</span></li>`;
         };
         const renderTopSubmitters = (tickets) => {
             const counts = tickets.reduce((acc, { SubmitterName }) => { 
@@ -569,14 +686,14 @@
                 return acc; 
             }, {});
             const sorted = Object.values(counts).sort((a, b) => b.count - a.count).slice(0, 5);
-            DOMElements.topSubmittersList.innerHTML = sorted.length ? sorted.map(({name, count}) => `<li class="stats-list-item"><span class="label">${sanitizeHTML(name)}</span><span class="value">${count} เคส</span></li>`).join('') : `<li class="stats-list-item">ไม่มีข้อมูล</li>`;
+            DOMElements.topSubmittersList.innerHTML = sorted.length ? sorted.map(({name, count}) => `<li class="stats-list-item"><span class="label">${sanitizeHTML(name)}</span><span class="value">${count} cases</span></li>`).join('') : `<li class="stats-list-item">No data</li>`;
         };
 
         const renderTickets = (tickets) => {
             const ticketListEl = DOMElements.ticketList;
             ticketListEl.innerHTML = '';
             if (!tickets || tickets.length === 0) {
-                ticketListEl.innerHTML = '<p class="text-center text-muted p-5">ยังไม่มีรายการแจ้งปัญหา</p>';
+                ticketListEl.innerHTML = '<p class="text-center text-muted p-5">No tickets found.</p>';
                 return;
             }
             tickets.sort((a, b) => {
@@ -587,7 +704,7 @@
                 const statusClass = ticket.Status === 'Open' ? 'bg-warning' : 'bg-success';
                 const resolutionCommentHTML = ticket.Status === 'Closed' && ticket.ResolutionComment 
                     ? `<div class="mt-3 pt-3 border-top border-secondary-subtle">
-                         <p class="mb-1"><strong><i class="bi bi-chat-square-text-fill me-2"></i>หมายเหตุการแก้ไข:</strong></p>
+                         <p class="mb-1"><strong><i class="bi bi-chat-square-text-fill me-2"></i>Resolution Comment:</strong></p>
                          <p class="text-white-50 mb-0" style="white-space: pre-wrap;">${sanitizeHTML(ticket.ResolutionComment)}</p>
                        </div>` 
                     : '';
@@ -600,18 +717,18 @@
                             <span class="badge rounded-pill status-badge ${statusClass}">${sanitizeHTML(ticket.Status)}</span>
                         </div>
                         <div class="ticket-details mt-2">
-                            <p class="mb-1"><strong>ผู้แจ้ง:</strong> ${sanitizeHTML(ticket.SubmitterName)}</p>
-                            <p class="mb-1"><strong>แผนก:</strong> ${sanitizeHTML(ticket.Department)}</p>
-                            <p class="mb-1"><strong>ประเภท:</strong> ${sanitizeHTML(ticket.ProblemType)}</p>
-                            <p class="mb-1"><strong>รายละเอียด:</strong></p>
+                            <p class="mb-1"><strong>Submitter:</strong> ${sanitizeHTML(ticket.SubmitterName)}</p>
+                            <p class="mb-1"><strong>Department:</strong> ${sanitizeHTML(ticket.Department)}</p>
+                            <p class="mb-1"><strong>Category:</strong> ${sanitizeHTML(ticket.ProblemType)}</p>
+                            <p class="mb-1"><strong>Details:</strong></p>
                             <p class="text-white-50" style="white-space: pre-wrap;">${sanitizeHTML(ticket.ProblemDetails)}</p>
                         </div>
                         <div class="ticket-footer small text-muted mt-3 pt-3 border-top border-secondary-subtle">
-                            แจ้งเมื่อ: ${sanitizeHTML(ticket.SubmissionDate) || 'N/A'} ${sanitizeHTML(ticket.SubmissionTime) || 'N/A'}
-                            ${ticket.Status === 'Closed' ? ` | ปิดเมื่อ: ${sanitizeHTML(ticket.ClosedDate) || 'N/A'} ${sanitizeHTML(ticket.ClosedTime) || 'N/A'}` : ''}
+                            Submitted: ${sanitizeHTML(ticket.SubmissionDate) || 'N/A'} ${sanitizeHTML(ticket.SubmissionTime) || 'N/A'}
+                            ${ticket.Status === 'Closed' ? ` | Closed: ${sanitizeHTML(ticket.ClosedDate) || 'N/A'} ${sanitizeHTML(ticket.ClosedTime) || 'N/A'}` : ''}
                         </div>
                         ${resolutionCommentHTML}
-                        ${ticket.Status === 'Open' ? `<div class="mt-3 text-end"><button class="btn btn-success btn-sm close-ticket-btn" data-row-index="${ticket.RowIndex}"><i class="bi bi-check-circle"></i> ปิดเคส</button></div>` : ''}
+                        ${ticket.Status === 'Open' ? `<div class="mt-3 text-end"><button class="btn btn-success btn-sm close-ticket-btn" data-row-index="${ticket.RowIndex}"><i class="bi bi-check-circle"></i> Close Case</button></div>` : ''}
                     </div>
                 </div>`);
             });
@@ -630,11 +747,10 @@
                     </tr>`);
             });
             const userCount = users.length;
-            DOMElements.userLimitMsg.textContent = `จำนวนผู้ใช้: ${userCount}/5`;
+            DOMElements.userLimitMsg.textContent = `Users: ${userCount}/5`;
             DOMElements.addUserForm.querySelector('button').disabled = userCount >= 5;
         };
 
-        // ***** MODIFIED for Performance *****
         async function initializeApp(isSilent = false) {
             const token = sessionStorage.getItem('authToken');
             if (!token) {
@@ -656,19 +772,18 @@
 
                     showDashboard();
                 } else if (!isSilent) { 
-                    showAlert('ไม่สามารถโหลดข้อมูลเริ่มต้นได้: ' + (result.message || 'Unknown error'), false); 
+                    showAlert('Could not load initial data: ' + (result.message || 'Unknown error'), false); 
                     handleLogout();
                 }
             } catch (error) { 
-                if (!isSilent) showAlert('เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.toString(), false);
+                if (!isSilent) showAlert('Connection Error: ' + error.toString(), false);
             } finally { 
                 if (!isSilent) showLoading(false);
             }
         }
 
-        // ***** NEW FUNCTION for Performance *****
         async function fetchUpdates() {
-            if (lastKnownRow === 0) return; // Don't poll if we have no initial data
+            if (lastKnownRow === 0) return; 
 
             try {
                 const response = await fetch(`${SCRIPT_URL}?lastRow=${lastKnownRow}&v=${new Date().getTime()}`);
@@ -683,7 +798,6 @@
                         lastKnownRow = newMaxRow;
                     }
 
-                    // Re-render the UI with fresh data
                     renderDashboard(allTickets);
                     renderTickets(allTickets);
                 }
@@ -701,10 +815,9 @@
             startPolling();
         }
 
-        // ***** MODIFIED for Performance *****
         function startPolling() {
             if (pollingIntervalId) clearInterval(pollingIntervalId);
-            pollingIntervalId = setInterval(fetchUpdates, 30000); // Poll for updates only
+            pollingIntervalId = setInterval(fetchUpdates, 30000);
         }
 
         function handleLogout() {
@@ -745,14 +858,13 @@
                     DOMElements.loginError.style.display = 'none';
                     initializeApp();
                 } else {
-                    DOMElements.loginError.textContent = 'Username หรือ Password ไม่ถูกต้อง!';
-                    DOMElements.loginError.style.display = 'block';
+                    DOMElements.loginError.textContent = 'Invalid username or password!';
                     const modalContent = Modals.login._element.querySelector('.modal-content');
                     modalContent.classList.add('shake-error');
                     setTimeout(() => modalContent.classList.remove('shake-error'), 600);
                 }
             } catch (error) {
-                DOMElements.loginError.textContent = 'เกิดข้อผิดพลาดในการเชื่อมต่อ';
+                DOMElements.loginError.textContent = 'Connection Error';
                 DOMElements.loginError.style.display = 'block';
             } finally {
                 showLoading(false);
@@ -782,8 +894,8 @@
                 Modals.editUser.show();
             }
             if (deleteBtn) {
-                if (adminUsers.length <= 1) return showAlert('ไม่สามารถลบผู้ใช้คนสุดท้ายได้', false);
-                showConfirm('คุณต้องการลบผู้ใช้นี้ใช่หรือไม่?', () => postToAction('deleteUser', { rowIndex: deleteBtn.dataset.rowIndex }));
+                if (adminUsers.length <= 1) return showAlert('Cannot delete the last user.', false);
+                showConfirm('Are you sure you want to delete this user?', () => postToAction('deleteUser', { rowIndex: deleteBtn.dataset.rowIndex }));
             }
         });
         

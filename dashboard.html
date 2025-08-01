@@ -145,9 +145,10 @@
 
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold d-flex align-items-center" href="admin.html">
+            <!-- ***** MODIFIED: Changed <a> to <div> to remove link ***** -->
+            <div class="navbar-brand fw-bold d-flex align-items-center">
                 <img src="https://res.cloudinary.com/dqveqz8cy/image/upload/v1753430042/IT_Logo_ptq112.png" alt="IT Helpdesk Logo" style="height: 40px; margin-right: 12px;">
-            </a>
+            </div>
             <div class="ms-auto">
                  <button id="logout-btn" class="btn btn-outline-danger" style="display: none;"><i class="bi bi-box-arrow-right"></i> ออกจากระบบ</button>
             </div>
@@ -283,7 +284,6 @@
             try {
                 const response = await fetch(SCRIPT_URL, { 
                     method: 'POST', 
-                    // LOGIN FIX: Revert to text/plain to avoid CORS preflight issues with Google Apps Script
                     headers: {'Content-Type': 'text/plain;charset=utf-8'},
                     body: JSON.stringify({ action, token, ...data }) 
                 });
@@ -670,7 +670,6 @@
         function handleLogout() {
             const token = sessionStorage.getItem('authToken');
             if (token) {
-                // LOGIN FIX: Revert to text/plain to avoid CORS preflight issues
                 fetch(SCRIPT_URL, {
                     method: 'POST',
                     headers: {'Content-Type': 'text/plain;charset=utf-8'},
@@ -695,7 +694,6 @@
             try {
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    // LOGIN FIX: Revert to text/plain to avoid CORS preflight issues
                     headers: {'Content-Type': 'text/plain;charset=utf-8'},
                     body: JSON.stringify({ action: 'login', username, password })
                 });

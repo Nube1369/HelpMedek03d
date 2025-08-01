@@ -117,7 +117,6 @@
         .loading-spinner { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1060; background: rgba(15, 23, 42, 0.8); padding: 2rem; border-radius: 1rem; backdrop-filter: blur(10px); }
         .modal-content { background: var(--bs-card-bg); border: 1px solid var(--bs-border-color); border-radius: 1rem; }
 
-        /* Custom Tippy.js Theme */
         .tippy-box[data-theme~='custom-dark'] {
             background-color: var(--bs-card-bg);
             color: var(--bs-body-color);
@@ -145,9 +144,10 @@
 
     <nav class="navbar sticky-top">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
+            <!-- ***** MODIFIED: Changed <a> to <div> to remove link ***** -->
+            <div class="navbar-brand fw-bold d-flex align-items-center">
                 <img src="https://res.cloudinary.com/dqveqz8cy/image/upload/v1753430042/IT_Logo_ptq112.png" alt="IT Helpdesk Logo" style="height: 40px; margin-right: 12px;">
-            </a>
+            </div>
         </div>
     </nav>
 
@@ -202,11 +202,10 @@
         const loadingSpinner = document.querySelector('.loading-spinner');
         const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
 
-        // Initialize Tippy.js Tooltips
         tippy('[data-tippy-content]', {
             theme: 'custom-dark',
             animation: 'fade',
-            trigger: 'focus', // Show on click/focus
+            trigger: 'focus',
             placement: 'top',
         });
 

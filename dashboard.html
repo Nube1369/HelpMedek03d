@@ -99,7 +99,6 @@
         .admin-nav .nav-link.active { color: #ffffff; background: var(--gradient-primary); box-shadow: var(--shadow-primary); }
         .loading-spinner { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1060; background: rgba(17, 24, 39, 0.8); padding: 2rem; border-radius: 1rem; backdrop-filter: blur(10px); }
         
-        /* Login Modal UI Update */
         .modal-content { background: var(--bs-card-bg); border: 1px solid var(--bs-border-color); border-radius: 1rem; }
         .modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--bs-border-color); }
         .modal-body { padding: 1.5rem; }
@@ -124,7 +123,6 @@
         .tippy-box[data-theme~='custom-dark'][data-placement^='bottom'] > .tippy-arrow::before { border-bottom-color: var(--bs-card-bg); }
         .tippy-content { padding: 0.5rem 0.75rem; }
         
-        /* Animations */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -157,7 +155,6 @@
     </nav>
 
     <div class="container main-container">
-        <!-- Admin Dashboard View -->
         <div id="admin-dashboard" style="display: none;">
             <ul class="nav nav-pills admin-nav">
                 <li class="nav-item"><a class="nav-link active" id="nav-dashboard" href="#"><i class="bi bi-grid-1x2-fill me-1"></i> ภาพรวม</a></li>
@@ -193,7 +190,13 @@
     <div class="loading-spinner"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>
     <div class="modal fade" id="alertModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="alertModalLabel"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="alertModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button></div></div></div></div>
     <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>เจ้าหน้าที่ล็อกอิน</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="login-form"><div class="mb-3"><label class="form-label">Username</label><input type="text" class="form-control" id="adminUsernameInput" required></div><div class="mb-3"><label class="form-label">Password</label><input type="password" class="form-control" id="adminPasswordInput" required></div><div id="login-error" class="text-danger mt-2" style="display: none;"></div><button type="submit" class="btn btn-primary w-100">เข้าสู่ระบบ</button></form></div></div></div></div>
+    
+    <!-- ***** NEW: RESOLUTION COMMENT MODAL ***** -->
+    <div class="modal fade" id="resolutionModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>บันทึกการแก้ไข (ปิดเคส)</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="resolution-form"><input type="hidden" id="resolutionRowIndex"><div class="mb-3"><label for="resolutionComment" class="form-label">หมายเหตุการแก้ไข (Resolution Comment)</label><textarea class="form-control" id="resolutionComment" rows="4" placeholder="ระบุวิธีการแก้ไขปัญหาโดยสรุป..."></textarea></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button><button type="submit" class="btn btn-primary">ยืนยันการปิดเคส</button></div></form></div></div></div></div>
+    
+    <!-- ***** FIXED: ADDED CONFIRM MODAL BACK ***** -->
     <div class="modal fade" id="confirmModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-question-circle me-2"></i>ยืนยันการดำเนินการ</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="confirmModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button><button type="button" class="btn btn-primary" id="confirmModalBtn">ยืนยัน</button></div></div></div></div>
+
     <div class="modal fade" id="editUserModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>แก้ไขข้อมูลผู้ใช้</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="edit-user-form"><input type="hidden" id="editUserRowIndex"><div class="mb-3"><label class="form-label">Username</label><input type="text" class="form-control" id="editUsername" required></div><div class="mb-3"><label class="form-label">Password</label><input type="text" class="form-control" id="editPassword" required></div><button type="submit" class="btn btn-primary w-100">บันทึก</button></form></div></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -216,6 +219,7 @@
             userTableBody: document.getElementById('user-table-body'),
             addUserForm: document.getElementById('add-user-form'),
             editUserForm: document.getElementById('edit-user-form'),
+            resolutionForm: document.getElementById('resolution-form'),
             userLimitMsg: document.getElementById('user-limit-msg'),
             openCasesCount: document.getElementById('open-cases-count'),
             closedCasesCount: document.getElementById('closed-cases-count'),
@@ -236,7 +240,8 @@
         const Modals = {
             alert: new bootstrap.Modal(document.getElementById('alertModal')),
             login: new bootstrap.Modal(document.getElementById('loginModal')),
-            confirm: new bootstrap.Modal(document.getElementById('confirmModal')),
+            confirm: new bootstrap.Modal(document.getElementById('confirmModal')), // FIXED
+            resolution: new bootstrap.Modal(document.getElementById('resolutionModal')),
             editUser: new bootstrap.Modal(document.getElementById('editUserModal')),
         };
 
@@ -245,11 +250,14 @@
             document.getElementById('alertModalBody').innerHTML = message;
             Modals.alert.show();
         };
+
+        // FIXED: ADDED showConfirm FUNCTION BACK
         const showConfirm = (message, callback) => {
             document.getElementById('confirmModalBody').textContent = message;
             confirmCallback = callback;
             Modals.confirm.show();
         };
+
         const showLoading = (show) => { DOMElements.loadingSpinner.style.display = show ? 'flex' : 'none'; };
         const switchAdminView = (targetId) => {
             document.querySelectorAll('#admin-content > div').forEach(p => p.style.display = 'none');
@@ -267,10 +275,16 @@
         const postToAction = async (action, data) => {
             showLoading(true);
             try {
-                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action, ...data }) });
+                await fetch(SCRIPT_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+                    body: JSON.stringify({ action, ...data }) 
+                });
                 showAlert('ดำเนินการเรียบร้อยแล้ว! ข้อมูลจะถูกรีเฟรชในไม่ช้า');
                 if (action.includes('User')) DOMElements.addUserForm.reset();
-                setTimeout(() => initializeApp(false), 2000); // Refresh with spinner after action
+                if (action === 'closeTicket') DOMElements.resolutionForm.reset();
+                setTimeout(() => initializeApp(false), 2000); 
             } catch (error) { showAlert('เกิดข้อผิดพลาด: ' + error.message, false); } 
             finally { showLoading(false); }
         };
@@ -325,7 +339,7 @@
                 .map(t => {
                     const start = parseThaiDateTime(t.SubmissionDate, t.SubmissionTime);
                     const end = parseThaiDateTime(t.ClosedDate, t.ClosedTime);
-                    return (start && end) ? (end - start) / 60000 : null; // minutes
+                    return (start && end) ? (end - start) / 60000 : null;
                 }).filter(d => d !== null && d >= 0);
 
             const avgMinutes = durationsInMinutes.length > 0 ? durationsInMinutes.reduce((a, b) => a + b, 0) / durationsInMinutes.length : 0;
@@ -358,7 +372,7 @@
                     datasets: [{ 
                         data: Object.values(typeCounts), 
                         backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'], 
-                        borderColor: '#1e293b',
+                        borderColor: '#1f2937',
                         borderWidth: 4,
                         hoverOffset: 12
                     }] 
@@ -541,16 +555,38 @@
             tickets.sort((a, b) => {
                 if (a.Status === 'Open' && b.Status !== 'Open') return -1;
                 if (a.Status !== 'Open' && b.Status === 'Open') return 1;
-                return b.RowIndex - a.RowIndex;
+                return Number(b.RowIndex) - Number(a.RowIndex);
             }).forEach(ticket => {
                 const statusClass = ticket.Status === 'Open' ? 'bg-warning' : 'bg-success';
+                const resolutionCommentHTML = ticket.Status === 'Closed' && ticket.ResolutionComment 
+                    ? `<div class="mt-3 pt-3 border-top border-secondary-subtle">
+                         <p class="mb-1"><strong><i class="bi bi-chat-square-text-fill me-2"></i>หมายเหตุการแก้ไข:</strong></p>
+                         <p class="text-white-50 mb-0" style="white-space: pre-wrap;">${sanitizeHTML(ticket.ResolutionComment)}</p>
+                       </div>` 
+                    : '';
+
                 ticketListEl.insertAdjacentHTML('beforeend', `
-                <div class="card mb-3"><div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-2"><span class="ticket-id">${sanitizeHTML(ticket.CaseID)}</span><span class="badge rounded-pill status-badge ${statusClass}">${sanitizeHTML(ticket.Status)}</span></div>
-                    <div class="ticket-details mt-2"><p class="mb-1"><strong>ผู้แจ้ง:</strong> ${sanitizeHTML(ticket.SubmitterName)}</p><p class="mb-1"><strong>แผนก:</strong> ${sanitizeHTML(ticket.Department)}</p><p class="mb-1"><strong>ประเภท:</strong> ${sanitizeHTML(ticket.ProblemType)}</p><p class="mb-1"><strong>รายละเอียด:</strong></p><p class="text-white-50" style="white-space: pre-wrap;">${sanitizeHTML(ticket.ProblemDetails)}</p></div>
-                    <div class="ticket-footer small mt-3 pt-3 border-top border-secondary-subtle">แจ้งเมื่อ: ${sanitizeHTML(ticket.SubmissionDate) || 'N/A'} ${sanitizeHTML(ticket.SubmissionTime) || 'N/A'}${ticket.Status === 'Closed' ? ` | ปิดเมื่อ: ${sanitizeHTML(ticket.ClosedDate) || 'N/A'} ${sanitizeHTML(ticket.ClosedTime) || 'N/A'}` : ''}</div>
-                    ${ticket.Status === 'Open' ? `<div class="mt-3 text-end"><button class="btn btn-success btn-sm close-ticket-btn" data-row-index="${ticket.RowIndex}"><i class="bi bi-check-circle"></i> ปิดเคส</button></div>` : ''}
-                </div></div>`);
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="ticket-id">${sanitizeHTML(ticket.CaseID)}</span>
+                            <span class="badge rounded-pill status-badge ${statusClass}">${sanitizeHTML(ticket.Status)}</span>
+                        </div>
+                        <div class="ticket-details mt-2">
+                            <p class="mb-1"><strong>ผู้แจ้ง:</strong> ${sanitizeHTML(ticket.SubmitterName)}</p>
+                            <p class="mb-1"><strong>แผนก:</strong> ${sanitizeHTML(ticket.Department)}</p>
+                            <p class="mb-1"><strong>ประเภท:</strong> ${sanitizeHTML(ticket.ProblemType)}</p>
+                            <p class="mb-1"><strong>รายละเอียด:</strong></p>
+                            <p class="text-white-50" style="white-space: pre-wrap;">${sanitizeHTML(ticket.ProblemDetails)}</p>
+                        </div>
+                        <div class="ticket-footer small text-muted mt-3 pt-3 border-top border-secondary-subtle">
+                            แจ้งเมื่อ: ${sanitizeHTML(ticket.SubmissionDate) || 'N/A'} ${sanitizeHTML(ticket.SubmissionTime) || 'N/A'}
+                            ${ticket.Status === 'Closed' ? ` | ปิดเมื่อ: ${sanitizeHTML(ticket.ClosedDate) || 'N/A'} ${sanitizeHTML(ticket.ClosedTime) || 'N/A'}` : ''}
+                        </div>
+                        ${resolutionCommentHTML}
+                        ${ticket.Status === 'Open' ? `<div class="mt-3 text-end"><button class="btn btn-success btn-sm close-ticket-btn" data-row-index="${ticket.RowIndex}"><i class="bi bi-check-circle"></i> ปิดเคส</button></div>` : ''}
+                    </div>
+                </div>`);
             });
         };
         const renderUsers = (users) => {
@@ -582,12 +618,12 @@
                     
                     if (sessionStorage.getItem('isLoggedIn') === 'true') {
                         showDashboard();
-                    } else if (!isSilent) { // Only show login modal on initial load
+                    } else if (!isSilent) {
                         Modals.login.show();
                     }
-                } else if (!isSilent) { showAlert('ไม่สามารถโหลดข้อมูลเริ่มต้นได้', false); }
+                } else if (!isSilent) { showAlert('ไม่สามารถโหลดข้อมูลเริ่มต้นได้: ' + (result.message || 'Unknown error'), false); }
             } catch (error) { 
-                if (!isSilent) showAlert('เกิดข้อผิดพลาดในการเชื่อมต่อ', false);
+                if (!isSilent) showAlert('เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.toString(), false);
             } finally { 
                 if (!isSilent) showLoading(false);
             }
@@ -604,7 +640,7 @@
 
         function startPolling() {
             if (pollingIntervalId) clearInterval(pollingIntervalId);
-            pollingIntervalId = setInterval(() => initializeApp(true), 30000); // Poll every 30 seconds
+            pollingIntervalId = setInterval(() => initializeApp(true), 30000);
         }
 
         DOMElements.logoutBtn.addEventListener('click', () => {
@@ -636,7 +672,7 @@
         });
 
         document.querySelectorAll('.admin-nav .nav-link').forEach(l => l.addEventListener('click', (e) => { e.preventDefault(); switchAdminView(`admin-view-${e.target.id.split('-')[1]}`); }));
-        DOMElements.confirmModalBtn.addEventListener('click', () => { if(confirmCallback) confirmCallback(); Modals.confirm.hide(); });
+        
         if(DOMElements.refreshBtn) {
             DOMElements.refreshBtn.addEventListener('click', () => initializeApp(false));
         }
@@ -646,7 +682,10 @@
             const editBtn = e.target.closest('.edit-user-btn');
             const deleteBtn = e.target.closest('.delete-user-btn');
 
-            if (closeBtn) showConfirm('คุณต้องการปิดเคสนี้ใช่หรือไม่?', () => postToAction('closeTicket', { rowIndex: closeBtn.dataset.rowIndex }));
+            if (closeBtn) {
+                document.getElementById('resolutionRowIndex').value = closeBtn.dataset.rowIndex;
+                Modals.resolution.show();
+            }
             
             if (editBtn) {
                 document.getElementById('editUserRowIndex').value = editBtn.dataset.rowIndex;
@@ -658,6 +697,22 @@
                 if (adminUsers.length <= 1) return showAlert('ไม่สามารถลบผู้ใช้คนสุดท้ายได้', false);
                 showConfirm('คุณต้องการลบผู้ใช้นี้ใช่หรือไม่?', () => postToAction('deleteUser', { rowIndex: deleteBtn.dataset.rowIndex }));
             }
+        });
+        
+        // FIXED: ADDED EVENT LISTENER BACK
+        if (DOMElements.confirmModalBtn) {
+            DOMElements.confirmModalBtn.addEventListener('click', () => { 
+                if(confirmCallback) confirmCallback(); 
+                Modals.confirm.hide(); 
+            });
+        }
+
+        DOMElements.resolutionForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const rowIndex = document.getElementById('resolutionRowIndex').value;
+            const resolutionComment = document.getElementById('resolutionComment').value;
+            postToAction('closeTicket', { rowIndex, resolutionComment });
+            Modals.resolution.hide();
         });
 
         DOMElements.addUserForm.addEventListener('submit', (e) => {

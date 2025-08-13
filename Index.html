@@ -117,6 +117,7 @@
         .loading-spinner { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1060; background: rgba(15, 23, 42, 0.8); padding: 2rem; border-radius: 1rem; backdrop-filter: blur(10px); }
         .modal-content { background: var(--bs-card-bg); border: 1px solid var(--bs-border-color); border-radius: 1rem; }
 
+        /* Custom Tippy.js Theme */
         .tippy-box[data-theme~='custom-dark'] {
             background-color: var(--bs-card-bg);
             color: var(--bs-body-color);
@@ -135,19 +136,24 @@
         .tippy-box[data-theme~='custom-dark'][data-placement^='bottom'] > .tippy-arrow::before {
             border-bottom-color: var(--bs-card-bg);
         }
-        .tippy-content {
-            padding: 0.5rem 0.75rem;
+        .tippy-content { padding: 0.5rem 0.75rem; }
+
+        /* ✅ ทำให้ข้อความใน Modal เป็นบรรทัดเดียว (ไม่ตัดบรรทัด) */
+        #alertModal .modal-title, #alertModal .modal-body { 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
         }
+        #alertModal .modal-dialog{ max-width: 560px; }
     </style>
 </head>
 <body>
 
     <nav class="navbar sticky-top">
         <div class="container-fluid">
-            <!-- ***** MODIFIED: Changed <a> to <div> to remove link ***** -->
-            <div class="navbar-brand fw-bold d-flex align-items-center">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
                 <img src="https://res.cloudinary.com/dqveqz8cy/image/upload/v1753430042/IT_Logo_ptq112.png" alt="IT Helpdesk Logo" style="height: 40px; margin-right: 12px;">
-            </div>
+            </a>
         </div>
     </nav>
 
@@ -191,28 +197,48 @@
     <div class="loading-spinner"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>
     <div class="modal fade" id="alertModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="alertModalLabel"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="alertModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button></div></div></div></div>
 
+    <!-- JS Libraries (load BEFORE inline script) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
+
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYKnFhgUsIQqj6B09f27eg210oIxy1rcmgX3atEU5_j5j2y8G0NrU9L1qKKEFPOlH-0Q/exec';
         
         const helpdeskForm = document.getElementById('helpdesk-form');
         const loadingSpinner = document.querySelector('.loading-spinner');
-        const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
 
-        tippy('[data-tippy-content]', {
-            theme: 'custom-dark',
-            animation: 'fade',
-            trigger: 'focus',
-            placement: 'top',
-        });
+        // Bootstrap modal instance (guarded)
+        const alertModalEl = document.getElementById('alertModal');
+        const alertModal = (window.bootstrap && window.bootstrap.Modal)
+            ? new bootstrap.Modal(alertModalEl)
+            : null;
+
+        // Initialize Tippy.js Tooltips (guarded)
+        if (window.tippy) {
+            tippy('[data-tippy-content]', {
+                theme: 'custom-dark',
+                animation: 'fade',
+                trigger: 'focus', // Show on click/focus
+                placement: 'top',
+            });
+        }
 
         const showAlert = (message, isSuccess = true) => {
-            document.getElementById('alertModalLabel').textContent = isSuccess ? 'สำเร็จ!' : 'เกิดข้อผิดพลาด';
-            document.getElementById('alertModalBody').innerHTML = message;
-            alertModal.show();
+            const title = document.getElementById('alertModalLabel');
+            const body = document.getElementById('alertModalBody');
+            if (title) title.textContent = isSuccess ? 'สำเร็จ!' : 'เกิดข้อผิดพลาด';
+            if (body) body.innerHTML = message;
+
+            if (alertModal) {
+                alertModal.show();
+                // Auto-close after 2s
+                setTimeout(() => alertModal.hide(), 2000);
+            } else {
+                // Fallback if Bootstrap JS failed to load
+                alert(message);
+            }
         };
 
         const showLoading = (show) => { loadingSpinner.style.display = show ? 'flex' : 'none'; };

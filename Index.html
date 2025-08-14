@@ -99,22 +99,6 @@
             box-shadow: 0 0 0 0.2rem rgba(34, 197, 94, 0.25); 
         }
 
-        .btn-primary { 
-            background: var(--gradient-primary); 
-            color: white; 
-            box-shadow: var(--shadow-primary); 
-            font-weight: 600; 
-            border-radius: 0.75rem; 
-            padding: 0.875rem 1.5rem; 
-            border: none;
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px -5px rgba(34, 197, 94, 0.3);
-        }
-        
-        .loading-spinner { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1060; background: rgba(15, 23, 42, 0.8); padding: 2rem; border-radius: 1rem; backdrop-filter: blur(10px); }
         .modal-content { background: var(--bs-card-bg); border: 1px solid var(--bs-border-color); border-radius: 1rem; }
 
         /* Custom Tippy.js Theme */
@@ -138,13 +122,147 @@
         }
         .tippy-content { padding: 0.5rem 0.75rem; }
 
-        /* ✅ ทำให้ข้อความใน Modal เป็นบรรทัดเดียว (ไม่ตัดบรรทัด) */
+        /* ทำให้ข้อความใน Modal เป็นบรรทัดเดียว (ไม่ตัดบรรทัด) */
         #alertModal .modal-title, #alertModal .modal-body { 
             white-space: nowrap; 
             overflow: hidden; 
             text-overflow: ellipsis; 
         }
         #alertModal .modal-dialog{ max-width: 560px; }
+
+        /* Custom button styles from Uiverse.io */
+        .custom-btn {
+            outline: none;
+            cursor: pointer;
+            border: none;
+            padding: 0.9rem 2rem;
+            margin: 0;
+            font-family: inherit;
+            font-size: inherit;
+            position: relative;
+            display: inline-block;
+            letter-spacing: 0.05rem;
+            font-weight: 700;
+            font-size: 17px;
+            border-radius: 500px;
+            overflow: hidden;
+            background: #66ff66;
+            color: ghostwhite;
+        }
+
+        .custom-btn span {
+            position: relative;
+            z-index: 10;
+            transition: color 0.4s;
+        }
+
+        .custom-btn:hover span {
+            color: black;
+        }
+
+        .custom-btn::before,
+        .custom-btn::after {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .custom-btn::before {
+            content: "";
+            background: #000;
+            width: 120%;
+            left: -10%;
+            transform: skew(30deg);
+            transition: transform 0.4s cubic-bezier(0.3, 1, 0.8, 1);
+        }
+
+        .custom-btn:hover::before {
+            transform: translate3d(100%, 0, 0);
+        }
+
+        /* --- Custom Loader Styles --- */
+        @keyframes loadingBar {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes check1 {
+            0%, 30% { transform: scale(0.75); background-color: #535353; }
+            31%, 100% { transform: scale(1); background-color: rgb(0, 205, 0); }
+        }
+        @keyframes check2 {
+            0%, 60% { transform: scale(0.75); background-color: #535353; }
+            61%, 100% { transform: scale(1); background-color: rgb(0, 205, 0); }
+        }
+        @keyframes check3 {
+            0%, 90% { transform: scale(0.75); background-color: #535353; }
+            91%, 100% { transform: scale(1); background-color: rgb(0, 205, 0); }
+        }
+        
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            z-index: 1050;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .loader {
+            position: relative;
+            background-color: #535353;
+            border-radius: 1em;
+            height: 1em;
+            width: 330px;
+        }
+
+        .bar {
+            position: relative;
+            background-color: rgb(0, 205, 0);
+            width: 40px;
+            height: 100%;
+            border-radius: 1em;
+            animation: loadingBar 2.5s linear forwards;
+        }
+
+        .check-bar-container {
+            position: absolute;
+            left: 0px;
+            top: -4px;
+            z-index: 69;
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            height: 0.5em;
+        }
+
+        .check {
+            border-radius: 1em;
+            height: 1.5em;
+            width: 1.5em;
+            padding: 3px;
+            background-color: #535353;
+            transform: scale(0.75);
+        }
+
+        .check-bar-container .check:nth-of-type(2) {
+            animation: check1 2.5s linear forwards;
+        }
+        .check-bar-container .check:nth-of-type(3) {
+            animation: check2 2.5s linear forwards;
+        }
+        .check-bar-container .check:nth-of-type(4) {
+            animation: check3 2.5s linear forwards;
+            transform-origin: right;
+        }
     </style>
 </head>
 <body>
@@ -187,14 +305,71 @@
                         <label for="problemDetails" class="form-label"><i class="bi bi-chat-text me-2"></i>รายละเอียดปัญหา</label>
                         <textarea class="form-control" id="problemDetails" rows="4" placeholder="กรุณาอธิบายปัญหาที่พบโดยละเอียด..." required data-tippy-content="รบกวนใส่ รายละเอียดปัญหาที่เกิดเบื้องต้น"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 py-3 fs-5 mt-3"><span class="spinner-border spinner-border-sm me-2" style="display: none;"></span><i class="bi bi-send me-1"></i>ส่งเรื่องแจ้งปัญหา</button>
+                    <button type="submit" class="custom-btn w-100 py-3 fs-5 mt-3">
+                        <span>
+                            <span class="spinner-border spinner-border-sm me-2" style="display: none;"></span>
+                            <i class="bi bi-send me-1"></i>ส่งเรื่องแจ้งปัญหา
+                        </span>
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Modals and Spinner -->
-    <div class="loading-spinner"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>
+    <!-- Modals and Loader -->
+    <div class="loader-container">
+        <div class="loader">
+            <div class="bar"></div>
+            <div class="check-bar-container">
+                <div></div>
+                <div class="check">
+                    <svg
+                        stroke="white"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="m4.5 12.75 6 6 9-13.5"
+                            stroke-linejoin="round"
+                            stroke-linecap="round"
+                        ></path>
+                    </svg>
+                </div>
+                <div class="check">
+                    <svg
+                        stroke="white"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="m4.5 12.75 6 6 9-13.5"
+                            stroke-linejoin="round"
+                            stroke-linecap="round"
+                        ></path>
+                    </svg>
+                </div>
+                <div class="check">
+                    <svg
+                        stroke="white"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="m4.5 12.75 6 6 9-13.5"
+                            stroke-linejoin="round"
+                            stroke-linecap="round"
+                        ></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="alertModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="alertModalLabel"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="alertModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button></div></div></div></div>
 
     <!-- JS Libraries (load BEFORE inline script) -->
@@ -207,7 +382,8 @@
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYKnFhgUsIQqj6B09f27eg210oIxy1rcmgX3atEU5_j5j2y8G0NrU9L1qKKEFPOlH-0Q/exec';
         
         const helpdeskForm = document.getElementById('helpdesk-form');
-        const loadingSpinner = document.querySelector('.loading-spinner');
+        const loaderContainer = document.querySelector('.loader-container');
+        const loaderBar = document.querySelector('.loader .bar');
 
         // Bootstrap modal instance (guarded)
         const alertModalEl = document.getElementById('alertModal');
@@ -225,55 +401,93 @@
             });
         }
 
+        /**
+         * แสดง modal alert พร้อมข้อความ
+         * @param {string} message - ข้อความที่จะแสดง
+         * @param {boolean} isSuccess - true ถ้าเป็นข้อความสำเร็จ, false ถ้าเป็นข้อผิดพลาด
+         */
         const showAlert = (message, isSuccess = true) => {
             const title = document.getElementById('alertModalLabel');
             const body = document.getElementById('alertModalBody');
             if (title) title.textContent = isSuccess ? 'สำเร็จ!' : 'เกิดข้อผิดพลาด';
-            if (body) body.innerHTML = message;
+            if (body) body.textContent = message;
 
             if (alertModal) {
                 alertModal.show();
-                // Auto-close after 2s
-                setTimeout(() => alertModal.hide(), 2000);
+                // ปิดอัตโนมัติหลังจาก 3 วินาที
+                setTimeout(() => alertModal.hide(), 3000); 
             } else {
-                // Fallback if Bootstrap JS failed to load
+                // Fallback หาก Bootstrap JS โหลดไม่สำเร็จ
                 alert(message);
             }
         };
 
-        const showLoading = (show) => { loadingSpinner.style.display = show ? 'flex' : 'none'; };
+        /**
+         * แสดงหรือซ่อน Loader แบบเต็มหน้าจอ
+         * @param {boolean} show - true เพื่อแสดง, false เพื่อซ่อน
+         */
+        const showLoading = (show) => { 
+            loaderContainer.style.display = show ? 'flex' : 'none'; 
+        };
 
+        /**
+         * ส่งข้อมูลฟอร์มไปยัง URL ของ Google Apps Script
+         * @param {string} action - การกระทำที่จะให้สคริปต์ทำ (เช่น 'submitTicket')
+         * @param {object} data - ข้อมูลที่จะส่ง
+         */
         const postToAction = async (action, data) => {
             showLoading(true);
-            const submitBtn = helpdeskForm.querySelector('button[type="submit"]');
-            const spinner = submitBtn.querySelector('.spinner-border');
-            if(spinner) spinner.style.display = 'inline-block';
+            const submitBtn = helpdeskForm.querySelector('.custom-btn');
             submitBtn.disabled = true;
+
+            let success = false;
+            let errorMessage = '';
+
             try {
+                // ส่งข้อมูลโดยใช้ fetch
                 await fetch(SCRIPT_URL, {
-                    method: 'POST', mode: 'no-cors', cache: 'no-cache',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
                     body: JSON.stringify({ action, ...data })
                 });
-                showAlert('ส่งเรื่องแจ้งปัญหาสำเร็จแล้ว! เจ้าหน้าที่จะดำเนินการตรวจสอบในลำดับต่อไป');
-                helpdeskForm.reset();
+                success = true;
             } catch (error) {
-                showAlert('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + error.message, false);
-            } finally {
-                showLoading(false);
-                if(spinner) spinner.style.display = 'none';
-                submitBtn.disabled = false;
+                errorMessage = error.message;
             }
+
+            // ใช้ setTimeout เพื่อรอ Loader เล่นให้จบก่อน
+            setTimeout(() => {
+                if (success) {
+                    showAlert('ส่งเรื่องแจ้งปัญหาสำเร็จแล้ว! เจ้าหน้าที่จะดำเนินการตรวจสอบในลำดับต่อไป');
+                    // เคลียร์ค่าของฟอร์มด้วยการตั้งค่า value เป็นค่าว่างโดยตรง
+                    document.getElementById('submitterName').value = '';
+                    document.getElementById('department').value = '';
+                    document.getElementById('problemType').value = '';
+                    document.getElementById('problemDetails').value = '';
+                    helpdeskForm.classList.remove('was-validated'); // ลบ validation status
+                } else {
+                    showAlert('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + errorMessage, false);
+                }
+                showLoading(false);
+                submitBtn.disabled = false;
+            }, 2500); 
         };
 
         helpdeskForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            postToAction('submitTicket', {
-                submitterName: document.getElementById('submitterName').value,
-                department: document.getElementById('department').value,
-                problemType: document.getElementById('problemType').value,
-                problemDetails: document.getElementById('problemDetails').value
-            });
+            if (helpdeskForm.checkValidity()) {
+                const data = {
+                    submitterName: document.getElementById('submitterName').value,
+                    department: document.getElementById('department').value,
+                    problemType: document.getElementById('problemType').value,
+                    problemDetails: document.getElementById('problemDetails').value
+                };
+                postToAction('submitTicket', data);
+            } else {
+                e.stopPropagation();
+                helpdeskForm.classList.add('was-validated');
+            }
         });
     });
     </script>

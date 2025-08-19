@@ -939,9 +939,10 @@
         let allTickets = [], adminUsers = [], problemTypeChart, dailyTrendChart, monthlyTrendChart;
         let confirmCallback = null;
         let pollingIntervalId = null;
-        let lastKnownRow = 0;
+        // ***** CHANGE: เปลี่ยนจากการเช็คแถวล่าสุด มาเป็นการเช็คเวลาล่าสุดแทน *****
+        let lastCheckedTimestamp = 0; 
         let needsRefresh = false; 
-        let alertCountdownInterval = null; // ***** NEW: For countdown timer *****
+        let alertCountdownInterval = null;
 
         const DOMElements = {
             adminDashboard: document.getElementById('admin-dashboard'),
@@ -977,12 +978,10 @@
             editUser: new bootstrap.Modal(document.getElementById('editUserModal')),
         };
 
-        // ***** START: MODIFIED FUNCTION *****
         const showAlert = (message, isSuccess = true) => {
             document.getElementById('alertModalLabel').textContent = isSuccess ? 'สำเร็จ!' : 'เกิดข้อผิดพลาด';
             document.getElementById('alertModalBody').innerHTML = message;
             
-            // Clear any previous countdown
             if (alertCountdownInterval) clearInterval(alertCountdownInterval);
 
             if (isSuccess) {
@@ -1003,7 +1002,6 @@
             
             Modals.alert.show();
         };
-        // ***** END: MODIFIED FUNCTION *****
 
         const showConfirm = (message, callback) => {
             document.getElementById('confirmModalBody').textContent = message;
@@ -1408,15 +1406,15 @@
 
             if (!isSilent) showLoading(true);
             try {
+                // ***** CHANGE: เวลาโหลดครั้งแรก จะไม่ส่งพารามิเตอร์ใดๆ เพื่อดึงข้อมูลทั้งหมด *****
                 const response = await fetch(`${SCRIPT_URL}?v=${new Date().getTime()}`);
                 const result = await response.json();
                 if (result.success) {
                     allTickets = (result.data.tickets || []).filter(t => t.CaseID && t.CaseID.trim() !== '');
                     adminUsers = result.data.users || [];
                     
-                    if (allTickets.length > 0) {
-                        lastKnownRow = Math.max(...allTickets.map(t => parseInt(t.RowIndex, 10) || 0));
-                    }
+                    // ***** CHANGE: ตั้งค่าเวลาล่าสุดที่เช็คเป็นเวลาปัจจุบัน *****
+                    lastCheckedTimestamp = new Date().getTime();
 
                     showDashboard();
                 } else if (!isSilent) { 
@@ -1430,25 +1428,48 @@
             }
         }
 
+        // ***** CHANGE: ปรับปรุงฟังก์ชัน fetchUpdates ทั้งหมด *****
         async function fetchUpdates() {
-            if (lastKnownRow === 0) return; 
-
             try {
-                const response = await fetch(`${SCRIPT_URL}?lastRow=${lastKnownRow}&v=${new Date().getTime()}`);
+                // ส่ง 'lastChecked' timestamp ไปยังเซิร์ฟเวอร์
+                const response = await fetch(`${SCRIPT_URL}?lastChecked=${lastCheckedTimestamp}&v=${new Date().getTime()}`);
                 const result = await response.json();
-                if (result.success && result.data.tickets && result.data.tickets.length > 0) {
-                    const newTickets = result.data.tickets;
-                    
-                    allTickets = allTickets.concat(newTickets);
-                    
-                    const newMaxRow = Math.max(...newTickets.map(t => parseInt(t.RowIndex, 10) || 0));
-                    if (newMaxRow > lastKnownRow) {
-                        lastKnownRow = newMaxRow;
-                    }
+                
+                // ตั้งค่า timestamp ใหม่ทันทีหลังได้การตอบกลับ เพื่อให้การเช็ครอบถัดไปไม่พลาดข้อมูล
+                const requestFinishedTime = new Date().getTime();
 
-                    renderDashboard(allTickets);
-                    renderTickets(allTickets);
+                if (result.success && result.data.tickets && result.data.tickets.length > 0) {
+                    const updatedTickets = result.data.tickets;
+                    let hasChanges = false;
+
+                    updatedTickets.forEach(updatedTicket => {
+                        // หา index ของ ticket ที่มีอยู่แล้วใน allTickets
+                        const existingTicketIndex = allTickets.findIndex(t => t.RowIndex === updatedTicket.RowIndex);
+
+                        if (existingTicketIndex > -1) {
+                            // ถ้าเจอ, ให้อัปเดตข้อมูล ticket เก่าด้วยข้อมูลใหม่
+                            allTickets[existingTicketIndex] = updatedTicket;
+                        } else {
+                            // ถ้าไม่เจอ, แสดงว่าเป็น ticket ใหม่
+                            allTickets.push(updatedTicket);
+                        }
+                        hasChanges = true;
+                    });
+                    
+                    // ถ้ามีการเปลี่ยนแปลง ให้ render หน้าจอใหม่
+                    if (hasChanges) {
+                        // เช็คว่าผู้ใช้กำลังดูหน้าไหนอยู่ แล้ว render เฉพาะส่วนนั้น
+                        if (document.getElementById('admin-view-dashboard').style.display === 'block') {
+                            renderDashboard(allTickets);
+                        }
+                        if (document.getElementById('admin-view-tickets').style.display === 'block') {
+                            renderTickets(allTickets);
+                        }
+                    }
                 }
+                // อัปเดต timestamp สำหรับการเช็ครอบต่อไป
+                lastCheckedTimestamp = requestFinishedTime;
+
             } catch (error) {
                 console.error("Polling for updates failed:", error);
             }
@@ -1465,7 +1486,8 @@
 
         function startPolling() {
             if (pollingIntervalId) clearInterval(pollingIntervalId);
-            pollingIntervalId = setInterval(fetchUpdates, 30000);
+            // ***** CHANGE: ลดเวลาการเช็คข้อมูลให้สั้นลง เพื่อให้รู้สึก real-time มากขึ้น *****
+            pollingIntervalId = setInterval(fetchUpdates, 15000); // เช็คทุก 15 วินาที
         }
 
         function handleLogout() {
@@ -1586,23 +1608,18 @@
             document.body.classList.remove('login-active-bg');
         });
         
-        // ***** START: MODIFIED EVENT LISTENER *****
         document.getElementById('alertModal').addEventListener('hidden.bs.modal', () => {
-            // Clear any running countdown
             if (alertCountdownInterval) {
                 clearInterval(alertCountdownInterval);
                 alertCountdownInterval = null;
             }
-            // Reset button text
             document.getElementById('alertModalCloseBtn').textContent = 'ปิด';
 
-            // If the last action was successful, refresh the data
             if (needsRefresh) {
-                needsRefresh = false; // Reset the flag
-                initializeApp(false); // Reload all data
+                needsRefresh = false; 
+                initializeApp(true); // ***** CHANGE: เปลี่ยนเป็น isSilent = true เพื่อไม่ให้มี loading spinner ทุกครั้งที่ปิดเคส *****
             }
         });
-        // ***** END: MODIFIED EVENT LISTENER *****
 
         initializeApp();
     });

@@ -537,9 +537,8 @@
 
         .modal-content { background: var(--bs-card-bg); border: 1px solid var(--bs-border-color); border-radius: 1rem; }
         
-        /* ***** START: New Login Form CSS ***** */
         #loginModal .modal-dialog {
-            max-width: 350px; /* Adjust width if needed */
+            max-width: 350px;
         }
 
         #loginModal .modal-content {
@@ -618,13 +617,13 @@
             color: rgb(0, 255, 200);
         }
 
-        #loginModal .login-card { /* Renamed from .card to avoid conflict */
+        #loginModal .login-card {
             background-image: linear-gradient(163deg, #00ff75 0%, #3700ff 100%);
             border-radius: 22px;
             transition: all .3s;
         }
 
-        #loginModal .login-card2 { /* Renamed from .card2 to avoid conflict */
+        #loginModal .login-card2 {
             border-radius: 0;
             transition: all .2s;
         }
@@ -643,7 +642,6 @@
             text-align: center;
             margin-top: 1em;
         }
-        /* ***** END: New Login Form CSS ***** */
 
         .tippy-box[data-theme~='custom-dark'] { background-color: var(--bs-card-bg); color: var(--bs-body-color); border: 1px solid var(--bs-border-color); font-family: 'Inter', 'Sarabun', sans-serif; border-radius: 0.75rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .tippy-box[data-theme~='custom-dark'][data-placement^='top'] > .tippy-arrow::before { border-top-color: var(--bs-card-bg); }
@@ -890,7 +888,6 @@
 
     <div class="modal fade" id="alertModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="alertModalLabel"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="alertModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="alertModalCloseBtn">ปิด</button></div></div></div></div>
     
-    <!-- ***** START: MODIFIED HTML for Login Modal ***** -->
     <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -920,7 +917,6 @@
             </div>
         </div>
     </div>
-    <!-- ***** END: MODIFIED HTML for Login Modal ***** -->
     
     <div class="modal fade" id="resolutionModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>บันทึกการแก้ไข (ปิดเคส)</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="resolution-form"><input type="hidden" id="resolutionRowIndex"><div class="mb-3"><label for="resolutionComment" class="form-label">หมายเหตุการแก้ไข (Resolution Comment)</label><textarea class="form-control" id="resolutionComment" rows="4" placeholder="ระบุวิธีการแก้ไขปัญหาโดยสรุป..."></textarea></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button><button type="submit" class="btn btn-primary">ยืนยันการปิดเคส</button></div></form></div></div></div></div>
     
@@ -939,7 +935,6 @@
         let allTickets = [], adminUsers = [], problemTypeChart, dailyTrendChart, monthlyTrendChart;
         let confirmCallback = null;
         let pollingIntervalId = null;
-        // ***** CHANGE: เปลี่ยนจากการเช็คแถวล่าสุด มาเป็นการเช็คเวลาล่าสุดแทน *****
         let lastCheckedTimestamp = 0; 
         let needsRefresh = false; 
         let alertCountdownInterval = null;
@@ -1364,7 +1359,8 @@
                         </div>
                         <div class="ticket-details mt-2">
                             <p class="mb-1"><strong>ผู้แจ้ง:</strong> ${sanitizeHTML(ticket.SubmitterName)}</p>
-                            <p class="mb-1"><strong>แผนก:</strong> ${sanitizeHTML(ticket.Department)}</p>
+                            <p class="mb-1"><strong>เบอร์ติดต่อ:</strong> ${sanitizeHTML(ticket.ContactNumber)}</p>
+                            <p class="mb-1"><strong>รหัสพนักงาน:</strong> ${sanitizeHTML(ticket.Department)}</p>
                             <p class="mb-1"><strong>ประเภท:</strong> ${sanitizeHTML(ticket.ProblemType)}</p>
                             <p class="mb-1"><strong>รายละเอียด:</strong></p>
                             <p class="text-white-50" style="white-space: pre-wrap;">${sanitizeHTML(ticket.ProblemDetails)}</p>
@@ -1406,14 +1402,12 @@
 
             if (!isSilent) showLoading(true);
             try {
-                // ***** CHANGE: เวลาโหลดครั้งแรก จะไม่ส่งพารามิเตอร์ใดๆ เพื่อดึงข้อมูลทั้งหมด *****
                 const response = await fetch(`${SCRIPT_URL}?v=${new Date().getTime()}`);
                 const result = await response.json();
                 if (result.success) {
                     allTickets = (result.data.tickets || []).filter(t => t.CaseID && t.CaseID.trim() !== '');
                     adminUsers = result.data.users || [];
                     
-                    // ***** CHANGE: ตั้งค่าเวลาล่าสุดที่เช็คเป็นเวลาปัจจุบัน *****
                     lastCheckedTimestamp = new Date().getTime();
 
                     showDashboard();
@@ -1428,37 +1422,28 @@
             }
         }
 
-        // ***** CHANGE: ปรับปรุงฟังก์ชัน fetchUpdates ทั้งหมด *****
         async function fetchUpdates() {
             try {
-                // ส่ง 'lastChecked' timestamp ไปยังเซิร์ฟเวอร์
                 const response = await fetch(`${SCRIPT_URL}?lastChecked=${lastCheckedTimestamp}&v=${new Date().getTime()}`);
+                const requestFinishedTime = new Date().getTime();
                 const result = await response.json();
                 
-                // ตั้งค่า timestamp ใหม่ทันทีหลังได้การตอบกลับ เพื่อให้การเช็ครอบถัดไปไม่พลาดข้อมูล
-                const requestFinishedTime = new Date().getTime();
-
                 if (result.success && result.data.tickets && result.data.tickets.length > 0) {
                     const updatedTickets = result.data.tickets;
                     let hasChanges = false;
 
                     updatedTickets.forEach(updatedTicket => {
-                        // หา index ของ ticket ที่มีอยู่แล้วใน allTickets
                         const existingTicketIndex = allTickets.findIndex(t => t.RowIndex === updatedTicket.RowIndex);
 
                         if (existingTicketIndex > -1) {
-                            // ถ้าเจอ, ให้อัปเดตข้อมูล ticket เก่าด้วยข้อมูลใหม่
                             allTickets[existingTicketIndex] = updatedTicket;
                         } else {
-                            // ถ้าไม่เจอ, แสดงว่าเป็น ticket ใหม่
                             allTickets.push(updatedTicket);
                         }
                         hasChanges = true;
                     });
                     
-                    // ถ้ามีการเปลี่ยนแปลง ให้ render หน้าจอใหม่
                     if (hasChanges) {
-                        // เช็คว่าผู้ใช้กำลังดูหน้าไหนอยู่ แล้ว render เฉพาะส่วนนั้น
                         if (document.getElementById('admin-view-dashboard').style.display === 'block') {
                             renderDashboard(allTickets);
                         }
@@ -1467,7 +1452,6 @@
                         }
                     }
                 }
-                // อัปเดต timestamp สำหรับการเช็ครอบต่อไป
                 lastCheckedTimestamp = requestFinishedTime;
 
             } catch (error) {
@@ -1486,8 +1470,7 @@
 
         function startPolling() {
             if (pollingIntervalId) clearInterval(pollingIntervalId);
-            // ***** CHANGE: ลดเวลาการเช็คข้อมูลให้สั้นลง เพื่อให้รู้สึก real-time มากขึ้น *****
-            pollingIntervalId = setInterval(fetchUpdates, 15000); // เช็คทุก 15 วินาที
+            pollingIntervalId = setInterval(fetchUpdates, 15000);
         }
 
         function handleLogout() {
@@ -1608,6 +1591,7 @@
             document.body.classList.remove('login-active-bg');
         });
         
+        // ***** CHANGE: แก้ไข Bug ที่นี่ *****
         document.getElementById('alertModal').addEventListener('hidden.bs.modal', () => {
             if (alertCountdownInterval) {
                 clearInterval(alertCountdownInterval);
@@ -1617,7 +1601,8 @@
 
             if (needsRefresh) {
                 needsRefresh = false; 
-                initializeApp(true); // ***** CHANGE: เปลี่ยนเป็น isSilent = true เพื่อไม่ให้มี loading spinner ทุกครั้งที่ปิดเคส *****
+                // เปลี่ยนจาก true เป็น false เพื่อให้มีการรีเฟรชแบบเต็มรูปแบบเสมอ
+                initializeApp(false); 
             }
         });
 

@@ -122,7 +122,6 @@
         }
         .tippy-content { padding: 0.5rem 0.75rem; }
 
-        /* ทำให้ข้อความใน Modal เป็นบรรทัดเดียว (ไม่ตัดบรรทัด) */
         #alertModal .modal-title, #alertModal .modal-body { 
             white-space: nowrap; 
             overflow: hidden; 
@@ -130,7 +129,6 @@
         }
         #alertModal .modal-dialog{ max-width: 560px; }
 
-        /* Custom button styles from Uiverse.io */
         .custom-btn {
             outline: none;
             cursor: pointer;
@@ -183,7 +181,6 @@
             transform: translate3d(100%, 0, 0);
         }
 
-        /* --- Custom Loader Styles --- */
         @keyframes loadingBar {
             0% {
                 width: 0%;
@@ -310,11 +307,12 @@
                     </div>
                     <div class="mb-4">
                         <label for="contactNumber" class="form-label"><i class="bi bi-telephone me-2"></i>เบอร์ติดต่อ หรือ 3CX</label>
-                        <input type="tel" class="form-control" id="contactNumber" placeholder="กรุณากรอกเบอร์โทรศัพท์" required>
+                        <input type="tel" class="form-control" id="contactNumber" placeholder="กรุณากรอกเบอร์โทรศัพท์" required data-tippy-content="ใส่เบอร์มือถือ หรือ เบอร์ 3cx ของตัวเอง เช่น 1222">
                     </div>
                     <div class="mb-4">
-                        <label for="department" class="form-label"><i class="bi bi-building me-2"></i>แผนก / ฝ่าย</label>
-                        <input type="text" class="form-control" id="department" placeholder="กรุณากรอกแผนกหรือฝ่ายงาน" required data-tippy-content="กรุณากรอก แผนก หรือ ฝ่าย เช่น IT HR เป็นต้น">
+                        <!-- ***** CHANGE: เปลี่ยน Label, placeholder, และ Tooltip ***** -->
+                        <label for="department" class="form-label"><i class="bi bi-person-badge me-2"></i>รหัสพนักงาน</label>
+                        <input type="text" class="form-control" id="department" placeholder="กรุณากรอกรหัสพนักงาน" required data-tippy-content="กรุณากรอกรหัสพนักงานของคุณ">
                     </div>
                     <div class="mb-4">
                         <label for="problemType" class="form-label"><i class="bi bi-tags me-2"></i>ประเภทปัญหา</label>
@@ -410,28 +408,25 @@
         
         const helpdeskForm = document.getElementById('helpdesk-form');
         const loaderContainer = document.querySelector('.loader-container');
+        const contactInput = document.getElementById('contactNumber');
+        const nameInput = document.getElementById('submitterName');
+        // ***** CHANGE: เพิ่มตัวแปรสำหรับช่องรหัสพนักงาน *****
+        const departmentInput = document.getElementById('department');
 
-        // Bootstrap modal instance (guarded)
         const alertModalEl = document.getElementById('alertModal');
         const alertModal = (window.bootstrap && window.bootstrap.Modal)
             ? new bootstrap.Modal(alertModalEl)
             : null;
 
-        // Initialize Tippy.js Tooltips (guarded)
         if (window.tippy) {
             tippy('[data-tippy-content]', {
                 theme: 'custom-dark',
                 animation: 'fade',
-                trigger: 'focus', // Show on click/focus
+                trigger: 'focus',
                 placement: 'top',
             });
         }
 
-        /**
-         * Shows a modal alert with a message.
-         * @param {string} message - The message to display.
-         * @param {boolean} isSuccess - True if it's a success message, false for an error.
-         */
         const showAlert = (message, isSuccess = true) => {
             const title = document.getElementById('alertModalLabel');
             const body = document.getElementById('alertModalBody');
@@ -440,65 +435,61 @@
 
             if (alertModal) {
                 alertModal.show();
-                // Auto-close after 3 seconds for a better user experience
                 setTimeout(() => alertModal.hide(), 3000); 
             } else {
-                // Fallback if Bootstrap JS failed to load
                 alert(message);
             }
         };
 
-        /**
-         * แสดงหรือซ่อน Loader แบบเต็มหน้าจอ
-         * @param {boolean} show - true เพื่อแสดง, false เพื่อซ่อน
-         */
         const showLoading = (show) => { 
             loaderContainer.style.display = show ? 'flex' : 'none'; 
         };
 
-        /**
-         * ส่งข้อมูลฟอร์มไปยัง Google Apps Script (ซึ่งจะส่งต่อให้ Teams)
-         * @param {string} action - การกระทำที่จะให้สคริปต์ทำ
-         * @param {object} data - ข้อมูลที่จะส่ง
-         */
         const postToAction = async (action, data) => {
             showLoading(true);
             const submitBtn = helpdeskForm.querySelector('.custom-btn');
             submitBtn.disabled = true;
 
             let success = false;
-            let errorMessage = '';
+            let responseMessage = '';
 
             try {
-                // ส่งข้อมูลไป Google Apps Script พร้อมกับ Webhook URL ของ Teams
-                await fetch(SCRIPT_URL, {
+                const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    cache: 'no-cache',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
                     body: JSON.stringify({ 
                         action, 
                         ...data,
                         teamsWebhookUrl: TEAMS_WEBHOOK_URL
                     })
                 });
-                success = true;
+                
+                const result = await response.json();
+                if (result.success) {
+                    success = true;
+                    responseMessage = 'ส่งเรื่องแจ้งปัญหาสำเร็จแล้ว! เจ้าหน้าที่จะดำเนินการตรวจสอบในลำดับต่อไป';
+                } else {
+                    success = false;
+                    responseMessage = result.message || 'เกิดข้อผิดพลาดที่ไม่รู้จัก';
+                }
             } catch (error) {
-                errorMessage = error.message;
+                success = false;
+                responseMessage = error.message;
             }
 
-            // ใช้ setTimeout เพื่อรอ Loader เล่นให้จบก่อน
             setTimeout(() => {
                 if (success) {
-                    showAlert('ส่งเรื่องแจ้งปัญหาสำเร็จแล้ว! เจ้าหน้าที่จะดำเนินการตรวจสอบในลำดับต่อไป');
-                    // เคลียร์ค่าของฟอร์มด้วยการตั้งค่า value เป็นค่าว่างโดยตรง
+                    showAlert(responseMessage);
                     document.getElementById('submitterName').value = '';
                     document.getElementById('department').value = '';
-                    document.getElementById('contactNumber').value = ''; // เพิ่มการเคลียร์ค่า ContactNumber
+                    document.getElementById('contactNumber').value = '';
                     document.getElementById('problemType').value = '';
                     document.getElementById('problemDetails').value = '';
-                    helpdeskForm.classList.remove('was-validated'); // ลบ validation status
+                    helpdeskForm.classList.remove('was-validated');
                 } else {
-                    showAlert('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + errorMessage, false);
+                    showAlert('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + responseMessage, false);
                 }
                 showLoading(false);
                 submitBtn.disabled = false;
@@ -511,7 +502,7 @@
                 const data = {
                     submitterName: document.getElementById('submitterName').value,
                     department: document.getElementById('department').value,
-                    contactNumber: document.getElementById('contactNumber').value, // เพิ่มการส่งค่า ContactNumber
+                    contactNumber: document.getElementById('contactNumber').value,
                     problemType: document.getElementById('problemType').value,
                     problemDetails: document.getElementById('problemDetails').value
                 };
@@ -521,8 +512,65 @@
                 helpdeskForm.classList.add('was-validated');
             }
         });
+
+        contactInput.addEventListener('input', (e) => {
+            const input = e.target;
+            let value = input.value;
+
+            let sanitized = value.replace(/[^0-9-]/g, '');
+
+            let digitCount = (sanitized.match(/\d/g) || []).length;
+
+            if (digitCount > 10) {
+                let result = '';
+                let digitsFound = 0;
+                for (const char of sanitized) {
+                    if (/\d/.test(char)) {
+                        if (digitsFound < 10) {
+                            result += char;
+                            digitsFound++;
+                        }
+                    } else {
+                        result += char;
+                    }
+                }
+                sanitized = result;
+            }
+
+            if (input.value !== sanitized) {
+                input.value = sanitized;
+            }
+        });
+
+        nameInput.addEventListener('input', (e) => {
+            const input = e.target;
+            let value = input.value;
+            let sanitized = value.replace(/[^a-zA-Z_ -]/g, '');
+            if (input.value !== sanitized) {
+                input.value = sanitized;
+            }
+        });
+
+        // ***** CHANGE: เพิ่ม Event Listener สำหรับช่องรหัสพนักงาน *****
+        departmentInput.addEventListener('input', (e) => {
+            const input = e.target;
+            let value = input.value;
+
+            // 1. กรองให้เหลือแค่ภาษาอังกฤษและตัวเลข
+            let sanitized = value.replace(/[^a-zA-Z0-9]/g, '');
+
+            // 2. จำกัดความยาวไม่เกิน 10 ตัวอักษร
+            if (sanitized.length > 10) {
+                sanitized = sanitized.substring(0, 10);
+            }
+
+            // 3. อัปเดตค่าในช่อง input
+            if (input.value !== sanitized) {
+                input.value = sanitized;
+            }
+        });
+
     });
     </script>
 </body>
 </html>
-

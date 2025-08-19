@@ -187,78 +187,38 @@
         @keyframes loadingBar {
             0% {
                 width: 0%;
-                animation-timing-function: ease-out;
-            }
-            30% {
-                width: 33%;
-                animation-timing-function: ease-out;
-            }
-            60% {
-                width: 66%;
-                animation-timing-function: ease-out;
-            }
-            90% {
-                width: 100%;
-                animation-timing-function: ease-out;
             }
             100% {
                 width: 100%;
-                animation-timing-function: ease-out;
             }
         }
 
-        @keyframes checkScale1 {
-            0% {
+        @keyframes check1 {
+            0%, 28% {
                 transform: scale(0.75);
                 background-color: #535353;
             }
-            28% {
-                transform: scale(0.75);
-                background-color: #535353;
-            }
-            29% {
-                transform: scale(1);
-                background-color: rgb(0, 205, 0);
-            }
-            100% {
+            29%, 100% {
                 transform: scale(1);
                 background-color: rgb(0, 205, 0);
             }
         }
-
-        @keyframes checkScale2 {
-            0% {
+        @keyframes check2 {
+            0%, 58% {
                 transform: scale(0.75);
                 background-color: #535353;
             }
-            58% {
-                transform: scale(0.75);
-                background-color: #535353;
-            }
-            59% {
-                transform: scale(1);
-                background-color: rgb(0, 205, 0);
-            }
-            100% {
+            59%, 100% {
                 transform: scale(1);
                 background-color: rgb(0, 205, 0);
             }
         }
-
-        @keyframes checkScale3 {
-            0% {
+        @keyframes check3 {
+            0%, 88% {
                 transform: scale(0.75);
                 background-color: #535353;
             }
-            88% {
-                transform: scale(0.75);
-                background-color: #535353;
-            }
-            89% {
-                transform: scale(1);
-                background-color: rgb(0, 205, 0);
-            }
-            100% {
+            89%, 100% {
                 transform: scale(1);
                 background-color: rgb(0, 205, 0);
             }
@@ -349,7 +309,7 @@
                         <input type="text" class="form-control" id="submitterName" placeholder="กรุณากรอกชื่อ-นามสกุล" required data-tippy-content="กรุณากรอกชื่อ ภาษาอังกฤษ_นามสกุลตัวแรก เช่น kanate_h">
                     </div>
                     <div class="mb-4">
-                        <label for="contactNumber" class="form-label"><i class="bi bi-telephone me-2"></i>เบอร์ติดต่อกลับ</label>
+                        <label for="contactNumber" class="form-label"><i class="bi bi-telephone me-2"></i>เบอร์ติดต่อกลับ / 3CX</label>
                         <input type="tel" class="form-control" id="contactNumber" placeholder="กรุณากรอกเบอร์โทรศัพท์" required>
                     </div>
                     <div class="mb-4">

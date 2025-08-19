@@ -185,21 +185,83 @@
 
         /* --- Custom Loader Styles --- */
         @keyframes loadingBar {
-            0% { width: 0%; }
-            100% { width: 100%; }
+            0% {
+                width: 0%;
+                animation-timing-function: ease-out;
+            }
+            30% {
+                width: 33%;
+                animation-timing-function: ease-out;
+            }
+            60% {
+                width: 66%;
+                animation-timing-function: ease-out;
+            }
+            90% {
+                width: 100%;
+                animation-timing-function: ease-out;
+            }
+            100% {
+                width: 100%;
+                animation-timing-function: ease-out;
+            }
         }
 
-        @keyframes check1 {
-            0%, 30% { transform: scale(0.75); background-color: #535353; }
-            31%, 100% { transform: scale(1); background-color: rgb(0, 205, 0); }
+        @keyframes checkScale1 {
+            0% {
+                transform: scale(0.75);
+                background-color: #535353;
+            }
+            28% {
+                transform: scale(0.75);
+                background-color: #535353;
+            }
+            29% {
+                transform: scale(1);
+                background-color: rgb(0, 205, 0);
+            }
+            100% {
+                transform: scale(1);
+                background-color: rgb(0, 205, 0);
+            }
         }
-        @keyframes check2 {
-            0%, 60% { transform: scale(0.75); background-color: #535353; }
-            61%, 100% { transform: scale(1); background-color: rgb(0, 205, 0); }
+
+        @keyframes checkScale2 {
+            0% {
+                transform: scale(0.75);
+                background-color: #535353;
+            }
+            58% {
+                transform: scale(0.75);
+                background-color: #535353;
+            }
+            59% {
+                transform: scale(1);
+                background-color: rgb(0, 205, 0);
+            }
+            100% {
+                transform: scale(1);
+                background-color: rgb(0, 205, 0);
+            }
         }
-        @keyframes check3 {
-            0%, 90% { transform: scale(0.75); background-color: #535353; }
-            91%, 100% { transform: scale(1); background-color: rgb(0, 205, 0); }
+
+        @keyframes checkScale3 {
+            0% {
+                transform: scale(0.75);
+                background-color: #535353;
+            }
+            88% {
+                transform: scale(0.75);
+                background-color: #535353;
+            }
+            89% {
+                transform: scale(1);
+                background-color: rgb(0, 205, 0);
+            }
+            100% {
+                transform: scale(1);
+                background-color: rgb(0, 205, 0);
+            }
         }
         
         .loader-container {
@@ -380,10 +442,11 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYKnFhgUsIQqj6B09f27eg210oIxy1rcmgX3atEU5_j5j2y8G0NrU9L1qKKEFPOlH-0Q/exec';
+        // Webhook URL สำหรับ Teams
+        const TEAMS_WEBHOOK_URL = 'https://gfca01.webhook.office.com/webhookb2/de97901a-eefb-492a-8fb7-c03c603f6195@19af367e-c732-4ec7-8827-53efe436e9b4/IncomingWebhook/b3b24608d3b947228730d9c82a30262f/f3d1fd26-08ff-4a9f-abe5-849e27434f09/V2vUwqPWN-YVmEAjezmU9cTCSoI9WjUyLZpcOgGGbvNZI1';
         
         const helpdeskForm = document.getElementById('helpdesk-form');
         const loaderContainer = document.querySelector('.loader-container');
-        const loaderBar = document.querySelector('.loader .bar');
 
         // Bootstrap modal instance (guarded)
         const alertModalEl = document.getElementById('alertModal');
@@ -402,9 +465,9 @@
         }
 
         /**
-         * แสดง modal alert พร้อมข้อความ
-         * @param {string} message - ข้อความที่จะแสดง
-         * @param {boolean} isSuccess - true ถ้าเป็นข้อความสำเร็จ, false ถ้าเป็นข้อผิดพลาด
+         * Shows a modal alert with a message.
+         * @param {string} message - The message to display.
+         * @param {boolean} isSuccess - True if it's a success message, false for an error.
          */
         const showAlert = (message, isSuccess = true) => {
             const title = document.getElementById('alertModalLabel');
@@ -414,10 +477,10 @@
 
             if (alertModal) {
                 alertModal.show();
-                // ปิดอัตโนมัติหลังจาก 3 วินาที
+                // Auto-close after 3 seconds for a better user experience
                 setTimeout(() => alertModal.hide(), 3000); 
             } else {
-                // Fallback หาก Bootstrap JS โหลดไม่สำเร็จ
+                // Fallback if Bootstrap JS failed to load
                 alert(message);
             }
         };
@@ -431,8 +494,8 @@
         };
 
         /**
-         * ส่งข้อมูลฟอร์มไปยัง URL ของ Google Apps Script
-         * @param {string} action - การกระทำที่จะให้สคริปต์ทำ (เช่น 'submitTicket')
+         * ส่งข้อมูลฟอร์มไปยัง Google Apps Script (ซึ่งจะส่งต่อให้ Teams)
+         * @param {string} action - การกระทำที่จะให้สคริปต์ทำ
          * @param {object} data - ข้อมูลที่จะส่ง
          */
         const postToAction = async (action, data) => {
@@ -444,12 +507,16 @@
             let errorMessage = '';
 
             try {
-                // ส่งข้อมูลโดยใช้ fetch
+                // ส่งข้อมูลไป Google Apps Script พร้อมกับ Webhook URL ของ Teams
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     cache: 'no-cache',
-                    body: JSON.stringify({ action, ...data })
+                    body: JSON.stringify({ 
+                        action, 
+                        ...data,
+                        teamsWebhookUrl: TEAMS_WEBHOOK_URL
+                    })
                 });
                 success = true;
             } catch (error) {
@@ -471,7 +538,7 @@
                 }
                 showLoading(false);
                 submitBtn.disabled = false;
-            }, 2500); 
+            }, 2500);
         };
 
         helpdeskForm.addEventListener('submit', (e) => {

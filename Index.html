@@ -349,6 +349,10 @@
                         <input type="text" class="form-control" id="submitterName" placeholder="กรุณากรอกชื่อ-นามสกุล" required data-tippy-content="กรุณากรอกชื่อ ภาษาอังกฤษ_นามสกุลตัวแรก เช่น kanate_h">
                     </div>
                     <div class="mb-4">
+                        <label for="contactNumber" class="form-label"><i class="bi bi-telephone me-2"></i>เบอร์ติดต่อกลับ</label>
+                        <input type="tel" class="form-control" id="contactNumber" placeholder="กรุณากรอกเบอร์โทรศัพท์" required>
+                    </div>
+                    <div class="mb-4">
                         <label for="department" class="form-label"><i class="bi bi-building me-2"></i>แผนก / ฝ่าย</label>
                         <input type="text" class="form-control" id="department" placeholder="กรุณากรอกแผนกหรือฝ่ายงาน" required data-tippy-content="กรุณากรอก แผนก หรือ ฝ่าย เช่น IT HR เป็นต้น">
                     </div>
@@ -442,7 +446,6 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYKnFhgUsIQqj6B09f27eg210oIxy1rcmgX3atEU5_j5j2y8G0NrU9L1qKKEFPOlH-0Q/exec';
-        // Webhook URL สำหรับ Teams
         const TEAMS_WEBHOOK_URL = 'https://gfca01.webhook.office.com/webhookb2/de97901a-eefb-492a-8fb7-c03c603f6195@19af367e-c732-4ec7-8827-53efe436e9b4/IncomingWebhook/b3b24608d3b947228730d9c82a30262f/f3d1fd26-08ff-4a9f-abe5-849e27434f09/V2vUwqPWN-YVmEAjezmU9cTCSoI9WjUyLZpcOgGGbvNZI1';
         
         const helpdeskForm = document.getElementById('helpdesk-form');
@@ -530,6 +533,7 @@
                     // เคลียร์ค่าของฟอร์มด้วยการตั้งค่า value เป็นค่าว่างโดยตรง
                     document.getElementById('submitterName').value = '';
                     document.getElementById('department').value = '';
+                    document.getElementById('contactNumber').value = ''; // เพิ่มการเคลียร์ค่า ContactNumber
                     document.getElementById('problemType').value = '';
                     document.getElementById('problemDetails').value = '';
                     helpdeskForm.classList.remove('was-validated'); // ลบ validation status
@@ -547,6 +551,7 @@
                 const data = {
                     submitterName: document.getElementById('submitterName').value,
                     department: document.getElementById('department').value,
+                    contactNumber: document.getElementById('contactNumber').value, // เพิ่มการส่งค่า ContactNumber
                     problemType: document.getElementById('problemType').value,
                     problemDetails: document.getElementById('problemDetails').value
                 };

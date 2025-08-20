@@ -1444,9 +1444,8 @@
                     });
                     
                     if (hasChanges) {
-                        if (document.getElementById('admin-view-dashboard').style.display === 'block') {
-                            renderDashboard(allTickets);
-                        }
+                        renderDashboard(allTickets); 
+
                         if (document.getElementById('admin-view-tickets').style.display === 'block') {
                             renderTickets(allTickets);
                         }
@@ -1591,7 +1590,6 @@
             document.body.classList.remove('login-active-bg');
         });
         
-        // ***** CHANGE: แก้ไข Bug ที่นี่ *****
         document.getElementById('alertModal').addEventListener('hidden.bs.modal', () => {
             if (alertCountdownInterval) {
                 clearInterval(alertCountdownInterval);
@@ -1601,7 +1599,6 @@
 
             if (needsRefresh) {
                 needsRefresh = false; 
-                // เปลี่ยนจาก true เป็น false เพื่อให้มีการรีเฟรชแบบเต็มรูปแบบเสมอ
                 initializeApp(false); 
             }
         });

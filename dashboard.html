@@ -1462,11 +1462,9 @@
                     });
                     
                     if (hasChanges) {
+                        // ***** FIX: Always render both dashboard and tickets when data changes *****
                         renderDashboard(allTickets); 
-
-                        if (document.getElementById('admin-view-tickets').style.display === 'block') {
-                            renderTickets(allTickets);
-                        }
+                        renderTickets(allTickets);
                     }
                 }
                 lastCheckedTimestamp = requestFinishedTime;

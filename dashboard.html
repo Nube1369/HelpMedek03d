@@ -1337,10 +1337,26 @@
                 ticketListEl.innerHTML = '<p class="text-center text-muted p-5">ไม่พบรายการปัญหา</p>';
                 return;
             }
+            
+            // ***** CHANGE: แก้ไขการเรียงลำดับที่นี่ *****
             tickets.sort((a, b) => {
-                if (a.Status === 'Open' && b.Status !== 'Open') return -1;
-                if (a.Status !== 'Open' && b.Status === 'Open') return 1;
-                return Number(b.RowIndex) - Number(a.RowIndex);
+                // Rule 1: Prioritize by Status ('Open' comes first)
+                if (a.Status === 'Open' && b.Status !== 'Open') {
+                    return -1; // a comes first
+                }
+                if (a.Status !== 'Open' && b.Status === 'Open') {
+                    return 1; // b comes first
+                }
+
+                // Rule 2: If statuses are the same, sort by submission date (latest first)
+                const dateA = parseThaiDateTime(a.SubmissionDate, a.SubmissionTime);
+                const dateB = parseThaiDateTime(b.SubmissionDate, b.SubmissionTime);
+
+                if (!dateA && !dateB) return 0;
+                if (!dateA) return 1;
+                if (!dateB) return -1;
+
+                return dateB - dateA; // Sort descending (latest first)
             }).forEach(ticket => {
                 const statusClass = ticket.Status === 'Open' ? 'bg-warning' : 'bg-success';
                 const resolutionCommentHTML = ticket.Status === 'Closed' && ticket.ResolutionComment 

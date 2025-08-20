@@ -865,8 +865,8 @@
                         <div class="col-lg-4 col-md-12"><div class="card h-100"><div class="card-header" data-tippy-content="แสดงรายชื่อ 5 อันดับแรกของผู้ใช้ที่แจ้งปัญหาเข้ามาบ่อยที่สุด"><i class="bi bi-person-check-fill me-2"></i>5 ผู้ที่แจ้งปัญหาบ่อยสุด</div><div class="card-body"><ul class="stats-list" id="top-submitters-list"></ul></div></div></div>
                     </div>
                 </div>
-                <div id="admin-view-tickets" style="display: none;"><div class="card"><div class="card-header d-flex justify-content-between align-items-center"><span><i class="bi bi-list-task me-2"></i>รายการแจ้งปัญหาทั้งหมด</span><button id="refresh-btn" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-clockwise me-1"></i>รีเฟรช</button></div><div class="card-body"><div id="ticket-list"></div></div></div></div>
-                <div id="admin-view-users" style="display: none;"><div class="card"><div class="card-header"><i class="bi bi-people me-2"></i>จัดการผู้ใช้ระบบ</div><div class="card-body"><div class="mb-4"><form id="add-user-form" class="row g-3 align-items-end"><div class="col-sm-4"><label for="newUsername" class="form-label">Username</label><input type="text" class="form-control" id="newUsername" required></div><div class="col-sm-4"><label for="newPassword" class="form-label">Password</label><input type="text" class="form-control" id="newPassword" required></div><div class="col-sm-4"><button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-circle me-1"></i>เพิ่มผู้ใช้</button></div></form><small id="user-limit-msg" class="form-text text-muted mt-2"></small></div><div class="table-responsive"><table class="table table-hover"><thead><tr><th>Username</th><th>Password</th><th class="text-end">Actions</th></tr></thead><tbody id="user-table-body"></tbody></table></div></div></div></div>
+                <div id="admin-view-tickets" style="display: none;"><div class="card"><div class="card-header d-flex justify-content-between align-items-center"><span><i class="bi bi-list-task me-2"></i>รายการแจ้งปัญหาทั้งหมด</span><button id="refresh-btn" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-clockwise me-1"></i>รีเฟรช</button></div><div class="card-body"><div id="ticket-list" class="row"></div></div></div></div>
+                <div id="admin-view-users" style="display: none;"><div class="card"><div class="card-header"><i class="bi bi-people me-2"></i>จัดการผู้ใช้ระบบ</div><div class="card-body"><div class="mb-4"><form id="add-user-form" class="row g-3 align-items-end"><div class="col-sm-4"><label for="newUsername" class="form-label">Username</label><input type="text" class="form-control" id="newUsername" required></div><div class="col-sm-4"><label for="newPassword" class="form-label">Password</label><input type="password" class="form-control" id="newPassword" required></div><div class="col-sm-4"><button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-circle me-1"></i>เพิ่มผู้ใช้</button></div></form><small id="user-limit-msg" class="form-text text-muted mt-2"></small></div><div class="table-responsive"><table class="table table-hover"><thead><tr><th>Username</th><th>Password</th><th class="text-end">Actions</th></tr></thead><tbody id="user-table-body"></tbody></table></div></div></div></div>
             </div>
         </div>
     </div>
@@ -922,7 +922,7 @@
     
     <div class="modal fade" id="confirmModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-question-circle me-2"></i>ยืนยันการดำเนินการ</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="confirmModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button><button type="button" class="btn btn-primary" id="confirmModalBtn">ยืนยัน</button></div></div></div></div>
 
-    <div class="modal fade" id="editUserModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>แก้ไขข้อมูลผู้ใช้</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="edit-user-form"><input type="hidden" id="editUserRowIndex"><div class="mb-3"><label class="form-label">Username</label><input type="text" class="form-control" id="editUsername" required></div><div class="mb-3"><label class="form-label">Password (ตั้งรหัสใหม่)</label><input type="text" class="form-control" id="editPassword" required></div><button type="submit" class="btn btn-primary w-100">บันทึก</button></form></div></div></div></div>
+    <div class="modal fade" id="editUserModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>แก้ไขข้อมูลผู้ใช้</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="edit-user-form"><input type="hidden" id="editUserRowIndex"><div class="mb-3"><label class="form-label">Username</label><input type="text" class="form-control" id="editUsername" required></div><div class="mb-3"><label class="form-label">Password (ตั้งรหัสใหม่)</label><input type="password" class="form-control" id="editPassword" required></div><button type="submit" class="btn btn-primary w-100">บันทึก</button></form></div></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/@popperjs/core@2"></script>
@@ -964,6 +964,10 @@
             adminContent: document.getElementById('admin-content'),
             refreshBtn: document.getElementById('refresh-btn'),
             confirmModalBtn: document.getElementById('confirmModalBtn'),
+            newUsernameInput: document.getElementById('newUsername'),
+            newPasswordInput: document.getElementById('newPassword'),
+            editUsernameInput: document.getElementById('editUsername'),
+            editPasswordInput: document.getElementById('editPassword')
         };
         const Modals = {
             alert: new bootstrap.Modal(document.getElementById('alertModal')),
@@ -1338,17 +1342,13 @@
                 return;
             }
             
-            // ***** CHANGE: แก้ไขการเรียงลำดับที่นี่ *****
             tickets.sort((a, b) => {
-                // Rule 1: Prioritize by Status ('Open' comes first)
                 if (a.Status === 'Open' && b.Status !== 'Open') {
-                    return -1; // a comes first
+                    return -1;
                 }
                 if (a.Status !== 'Open' && b.Status === 'Open') {
-                    return 1; // b comes first
+                    return 1;
                 }
-
-                // Rule 2: If statuses are the same, sort by submission date (latest first)
                 const dateA = parseThaiDateTime(a.SubmissionDate, a.SubmissionTime);
                 const dateB = parseThaiDateTime(b.SubmissionDate, b.SubmissionTime);
 
@@ -1356,39 +1356,41 @@
                 if (!dateA) return 1;
                 if (!dateB) return -1;
 
-                return dateB - dateA; // Sort descending (latest first)
+                return dateB - dateA;
             }).forEach(ticket => {
-                const statusClass = ticket.Status === 'Open' ? 'bg-warning' : 'bg-success';
-                const resolutionCommentHTML = ticket.Status === 'Closed' && ticket.ResolutionComment 
-                    ? `<div class="mt-3 pt-3 border-top border-secondary-subtle">
-                         <p class="mb-1"><strong><i class="bi bi-chat-square-text-fill me-2"></i>หมายเหตุการแก้ไข:</strong></p>
-                         <p class="text-white-50 mb-0" style="white-space: pre-wrap;">${sanitizeHTML(ticket.ResolutionComment)}</p>
-                       </div>` 
-                    : '';
-
-                ticketListEl.insertAdjacentHTML('beforeend', `
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <span class="ticket-id">${sanitizeHTML(ticket.CaseID)}</span>
-                            <span class="badge rounded-pill status-badge ${statusClass}">${sanitizeHTML(ticket.Status)}</span>
+                const cardHtml = `
+                <div class="col-lg-4 col-md-6 mb-4 d-flex align-items-stretch">
+                    <div class="card w-100 d-flex flex-column">
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="ticket-id">${sanitizeHTML(ticket.CaseID)}</span>
+                                <span class="badge rounded-pill status-badge ${ticket.Status === 'Open' ? 'bg-warning' : 'bg-success'}">${sanitizeHTML(ticket.Status)}</span>
+                            </div>
+                            <div class="ticket-details mt-2">
+                                <p class="mb-1"><strong>ผู้แจ้ง:</strong> ${sanitizeHTML(ticket.SubmitterName)}</p>
+                                <p class="mb-1"><strong>เบอร์ติดต่อ:</strong> ${sanitizeHTML(ticket.ContactNumber)}</p>
+                                <p class="mb-1"><strong>รหัสพนักงาน:</strong> ${sanitizeHTML(ticket.Department)}</p>
+                                <p class="mb-1"><strong>ประเภท:</strong> ${sanitizeHTML(ticket.ProblemType)}</p>
+                                <p class="mb-1"><strong>รายละเอียด:</strong></p>
+                                <p class="text-white-50" style="white-space: pre-wrap;">${sanitizeHTML(ticket.ProblemDetails)}</p>
+                            </div>
+                            <!-- ***** CHANGE: Rearrange date display ***** -->
+                            <div class="ticket-footer small text-muted mt-3 pt-3 border-top border-secondary-subtle">
+                                <div>แจ้งเมื่อ: ${sanitizeHTML(ticket.SubmissionDate) || 'N/A'} ${sanitizeHTML(ticket.SubmissionTime) || 'N/A'}</div>
+                                ${ticket.Status === 'Closed' ? `<div>ปิดเมื่อ: ${sanitizeHTML(ticket.ClosedDate) || 'N/A'} ${sanitizeHTML(ticket.ClosedTime) || 'N/A'}</div>` : ''}
+                            </div>
+                            ${ticket.Status === 'Closed' && ticket.ResolutionComment ? `
+                            <div class="mt-3 pt-3 border-top border-secondary-subtle">
+                                <p class="mb-1"><strong><i class="bi bi-chat-square-text-fill me-2"></i>หมายเหตุการแก้ไข:</strong></p>
+                                <p class="text-white-50 mb-0" style="white-space: pre-wrap;">${sanitizeHTML(ticket.ResolutionComment)}</p>
+                            </div>` : ''}
+                            <div class="mt-auto text-end pt-3">
+                            ${ticket.Status === 'Open' ? `<button class="btn btn-success btn-sm close-ticket-btn" data-row-index="${ticket.RowIndex}"><i class="bi bi-check-circle"></i> ปิดเคส</button>` : ''}
+                            </div>
                         </div>
-                        <div class="ticket-details mt-2">
-                            <p class="mb-1"><strong>ผู้แจ้ง:</strong> ${sanitizeHTML(ticket.SubmitterName)}</p>
-                            <p class="mb-1"><strong>เบอร์ติดต่อ:</strong> ${sanitizeHTML(ticket.ContactNumber)}</p>
-                            <p class="mb-1"><strong>รหัสพนักงาน:</strong> ${sanitizeHTML(ticket.Department)}</p>
-                            <p class="mb-1"><strong>ประเภท:</strong> ${sanitizeHTML(ticket.ProblemType)}</p>
-                            <p class="mb-1"><strong>รายละเอียด:</strong></p>
-                            <p class="text-white-50" style="white-space: pre-wrap;">${sanitizeHTML(ticket.ProblemDetails)}</p>
-                        </div>
-                        <div class="ticket-footer small text-muted mt-3 pt-3 border-top border-secondary-subtle">
-                            แจ้งเมื่อ: ${sanitizeHTML(ticket.SubmissionDate) || 'N/A'} ${sanitizeHTML(ticket.SubmissionTime) || 'N/A'}
-                            ${ticket.Status === 'Closed' ? ` | ปิดเมื่อ: ${sanitizeHTML(ticket.ClosedDate) || 'N/A'} ${sanitizeHTML(ticket.ClosedTime) || 'N/A'}` : ''}
-                        </div>
-                        ${resolutionCommentHTML}
-                        ${ticket.Status === 'Open' ? `<div class="mt-3 text-end"><button class="btn btn-success btn-sm close-ticket-btn" data-row-index="${ticket.RowIndex}"><i class="bi bi-check-circle"></i> ปิดเคส</button></div>` : ''}
                     </div>
-                </div>`);
+                </div>`;
+                ticketListEl.insertAdjacentHTML('beforeend', cardHtml);
             });
         };
         const renderUsers = (users) => {
@@ -1585,16 +1587,16 @@
         DOMElements.addUserForm.addEventListener('submit', (e) => {
             e.preventDefault();
             postToAction('addUser', {
-                username: document.getElementById('newUsername').value,
-                password: document.getElementById('newPassword').value
+                username: DOMElements.newUsernameInput.value,
+                password: DOMElements.newPasswordInput.value
             });
         });
         DOMElements.editUserForm.addEventListener('submit', (e) => {
             e.preventDefault();
             postToAction('editUser', {
                 rowIndex: document.getElementById('editUserRowIndex').value,
-                username: document.getElementById('editUsername').value,
-                password: document.getElementById('editPassword').value
+                username: DOMElements.editUsernameInput.value,
+                password: DOMElements.editPasswordInput.value
             }).then(() => Modals.editUser.hide());
         });
         
@@ -1618,6 +1620,20 @@
                 initializeApp(false); 
             }
         });
+
+        const sanitizeInput = (e) => {
+            const input = e.target;
+            let sanitized = input.value.replace(/[^\x00-\x7F]/g, '');
+            if (input.value !== sanitized) {
+                input.value = sanitized;
+            }
+        };
+
+        DOMElements.newUsernameInput.addEventListener('input', sanitizeInput);
+        DOMElements.newPasswordInput.addEventListener('input', sanitizeInput);
+        DOMElements.editUsernameInput.addEventListener('input', sanitizeInput);
+        DOMElements.editPasswordInput.addEventListener('input', sanitizeInput);
+
 
         initializeApp();
     });

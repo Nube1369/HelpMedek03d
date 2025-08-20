@@ -310,7 +310,6 @@
                         <input type="tel" class="form-control" id="contactNumber" placeholder="กรุณากรอกเบอร์โทรศัพท์" required data-tippy-content="ใส่เบอร์มือถือ หรือ เบอร์ 3cx ของตัวเอง เช่น 1222">
                     </div>
                     <div class="mb-4">
-                        <!-- ***** CHANGE: เปลี่ยน Label, placeholder, และ Tooltip ***** -->
                         <label for="department" class="form-label"><i class="bi bi-person-badge me-2"></i>รหัสพนักงาน</label>
                         <input type="text" class="form-control" id="department" placeholder="กรุณากรอกรหัสพนักงาน" required data-tippy-content="กรุณากรอกรหัสพนักงานของคุณ">
                     </div>
@@ -404,13 +403,12 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYKnFhgUsIQqj6B09f27eg210oIxy1rcmgX3atEU5_j5j2y8G0NrU9L1qKKEFPOlH-0Q/exec';
-        const TEAMS_WEBHOOK_URL = 'https://gfca01.webhook.office.com/webhookb2/de97901a-eefb-492a-8fb7-c03c603f6195@19af367e-c732-4ec7-8827-53efe436e9b4/IncomingWebhook/b3b24608d3b947228730d9c82a30262f/f3d1fd26-08ff-4a9f-abe5-849e27434f09/V2vUwqPWN-YVmEAjezmU9cTCSoI9WjUyLZpcOgGGbvNZI1';
+        // ***** FIX #2: ลบ Webhook URL ออกจากฝั่ง Client *****
         
         const helpdeskForm = document.getElementById('helpdesk-form');
         const loaderContainer = document.querySelector('.loader-container');
         const contactInput = document.getElementById('contactNumber');
         const nameInput = document.getElementById('submitterName');
-        // ***** CHANGE: เพิ่มตัวแปรสำหรับช่องรหัสพนักงาน *****
         const departmentInput = document.getElementById('department');
 
         const alertModalEl = document.getElementById('alertModal');
@@ -459,10 +457,10 @@
                     headers: {
                         'Content-Type': 'text/plain;charset=utf-8',
                     },
+                    // ***** FIX #2: ไม่ต้องส่ง Webhook URL ไปกับข้อมูลแล้ว *****
                     body: JSON.stringify({ 
                         action, 
-                        ...data,
-                        teamsWebhookUrl: TEAMS_WEBHOOK_URL
+                        ...data
                     })
                 });
                 
@@ -551,20 +549,16 @@
             }
         });
 
-        // ***** CHANGE: เพิ่ม Event Listener สำหรับช่องรหัสพนักงาน *****
         departmentInput.addEventListener('input', (e) => {
             const input = e.target;
             let value = input.value;
 
-            // 1. กรองให้เหลือแค่ภาษาอังกฤษและตัวเลข
             let sanitized = value.replace(/[^a-zA-Z0-9]/g, '');
 
-            // 2. จำกัดความยาวไม่เกิน 10 ตัวอักษร
             if (sanitized.length > 10) {
                 sanitized = sanitized.substring(0, 10);
             }
 
-            // 3. อัปเดตค่าในช่อง input
             if (input.value !== sanitized) {
                 input.value = sanitized;
             }

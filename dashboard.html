@@ -831,7 +831,8 @@
             <ul class="nav nav-pills admin-nav">
                 <li class="nav-item"><a class="nav-link active" id="nav-dashboard" href="#"><i class="bi bi-grid-1x2-fill me-1"></i> ภาพรวม</a></li>
                 <li class="nav-item"><a class="nav-link" id="nav-tickets" href="#"><i class="bi bi-list-task me-1"></i> รายการปัญหา</a></li>
-                <li class="nav-item"><a class="nav-link" id="nav-users" href="#"><i class="bi bi-people me-1"></i> จัดการผู้ใช้</a></li>
+                <!-- ***** CHANGE: เพิ่ม id ให้กับ <li> เพื่อให้ซ่อน/แสดงได้ ***** -->
+                <li class="nav-item" id="nav-users-li"><a class="nav-link" id="nav-users" href="#"><i class="bi bi-people me-1"></i> จัดการผู้ใช้</a></li>
             </ul>
             <div id="admin-content">
                 <div id="admin-view-dashboard">
@@ -866,7 +867,25 @@
                     </div>
                 </div>
                 <div id="admin-view-tickets" style="display: none;"><div class="card"><div class="card-header d-flex justify-content-between align-items-center"><span><i class="bi bi-list-task me-2"></i>รายการแจ้งปัญหาทั้งหมด</span><button id="refresh-btn" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-clockwise me-1"></i>รีเฟรช</button></div><div class="card-body"><div id="ticket-list" class="row"></div></div></div></div>
-                <div id="admin-view-users" style="display: none;"><div class="card"><div class="card-header"><i class="bi bi-people me-2"></i>จัดการผู้ใช้ระบบ</div><div class="card-body"><div class="mb-4"><form id="add-user-form" class="row g-3 align-items-end"><div class="col-sm-4"><label for="newUsername" class="form-label">Username</label><input type="text" class="form-control" id="newUsername" required></div><div class="col-sm-4"><label for="newPassword" class="form-label">Password</label><input type="password" class="form-control" id="newPassword" required></div><div class="col-sm-4"><button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-circle me-1"></i>เพิ่มผู้ใช้</button></div></form><small id="user-limit-msg" class="form-text text-muted mt-2"></small></div><div class="table-responsive"><table class="table table-hover"><thead><tr><th>Username</th><th>Password</th><th class="text-end">Actions</th></tr></thead><tbody id="user-table-body"></tbody></table></div></div></div></div>
+                <div id="admin-view-users" style="display: none;"><div class="card"><div class="card-header"><i class="bi bi-people me-2"></i>จัดการผู้ใช้ระบบ</div><div class="card-body">
+                    <!-- ***** CHANGE: ปรับ layout ของฟอร์มเพิ่มผู้ใช้เพื่อเพิ่มช่อง Role ***** -->
+                    <div class="mb-4">
+                        <form id="add-user-form" class="row g-3 align-items-end">
+                            <div class="col-sm-4"><label for="newUsername" class="form-label">Username</label><input type="text" class="form-control" id="newUsername" required></div>
+                            <div class="col-sm-4"><label for="newPassword" class="form-label">Password</label><input type="password" class="form-control" id="newPassword" required></div>
+                            <div class="col-sm-2">
+                                <label for="newUserRole" class="form-label">Role</label>
+                                <select id="newUserRole" class="form-select">
+                                    <option value="Agent" selected>Agent</option>
+                                    <option value="Admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2"><button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-circle me-1"></i>เพิ่ม</button></div>
+                        </form>
+                        <small id="user-limit-msg" class="form-text text-muted mt-2"></small>
+                    </div>
+                    <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Username</th><th>Password</th><th>Role</th><th class="text-end">Actions</th></tr></thead><tbody id="user-table-body"></tbody></table></div>
+                </div></div></div>
             </div>
         </div>
     </div>
@@ -922,7 +941,8 @@
     
     <div class="modal fade" id="confirmModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-question-circle me-2"></i>ยืนยันการดำเนินการ</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="confirmModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button><button type="button" class="btn btn-primary" id="confirmModalBtn">ยืนยัน</button></div></div></div></div>
 
-    <div class="modal fade" id="editUserModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>แก้ไขข้อมูลผู้ใช้</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="edit-user-form"><input type="hidden" id="editUserRowIndex"><div class="mb-3"><label class="form-label">Username</label><input type="text" class="form-control" id="editUsername" required></div><div class="mb-3"><label class="form-label">Password (ตั้งรหัสใหม่)</label><input type="password" class="form-control" id="editPassword" required></div><button type="submit" class="btn btn-primary w-100">บันทึก</button></form></div></div></div></div>
+    <!-- ***** CHANGE: เพิ่มช่องเลือก Role ใน Modal แก้ไขผู้ใช้ ***** -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>แก้ไขข้อมูลผู้ใช้</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="edit-user-form"><input type="hidden" id="editUserRowIndex"><div class="mb-3"><label class="form-label">Username</label><input type="text" class="form-control" id="editUsername" required></div><div class="mb-3"><label class="form-label">Password (ตั้งรหัสใหม่)</label><input type="password" class="form-control" id="editPassword" required></div><div class="mb-3"><label class="form-label">Role</label><select id="editUserRole" class="form-select"><option value="Agent">Agent</option><option value="Admin">Admin</option></select></div><button type="submit" class="btn btn-primary w-100">บันทึก</button></form></div></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/@popperjs/core@2"></script>
@@ -966,8 +986,11 @@
             confirmModalBtn: document.getElementById('confirmModalBtn'),
             newUsernameInput: document.getElementById('newUsername'),
             newPasswordInput: document.getElementById('newPassword'),
+            newUserRoleSelect: document.getElementById('newUserRole'),
             editUsernameInput: document.getElementById('editUsername'),
-            editPasswordInput: document.getElementById('editPassword')
+            editPasswordInput: document.getElementById('editPassword'),
+            editUserRoleSelect: document.getElementById('editUserRole'),
+            navUsersLi: document.getElementById('nav-users-li')
         };
         const Modals = {
             alert: new bootstrap.Modal(document.getElementById('alertModal')),
@@ -1374,7 +1397,6 @@
                                 <p class="mb-1"><strong>รายละเอียด:</strong></p>
                                 <p class="text-white-50" style="white-space: pre-wrap;">${sanitizeHTML(ticket.ProblemDetails)}</p>
                             </div>
-                            <!-- ***** CHANGE: Rearrange date display ***** -->
                             <div class="ticket-footer small text-muted mt-3 pt-3 border-top border-secondary-subtle">
                                 <div>แจ้งเมื่อ: ${sanitizeHTML(ticket.SubmissionDate) || 'N/A'} ${sanitizeHTML(ticket.SubmissionTime) || 'N/A'}</div>
                                 ${ticket.Status === 'Closed' ? `<div>ปิดเมื่อ: ${sanitizeHTML(ticket.ClosedDate) || 'N/A'} ${sanitizeHTML(ticket.ClosedTime) || 'N/A'}</div>` : ''}
@@ -1398,10 +1420,14 @@
             userTableBodyEl.innerHTML = '';
             if (!users || users.length === 0) return;
             users.forEach(user => {
+                // ***** CHANGE: เพิ่มการแสดง Role ในตาราง และส่งค่า role ไปกับปุ่มแก้ไข *****
                 userTableBodyEl.insertAdjacentHTML('beforeend', `
-                    <tr><td>${sanitizeHTML(user.username)}</td><td>******</td>
+                    <tr>
+                        <td>${sanitizeHTML(user.username)}</td>
+                        <td>******</td>
+                        <td><span class="badge bg-secondary">${sanitizeHTML(user.role)}</span></td>
                         <td class="text-end">
-                            <button class="btn btn-sm btn-outline-warning me-2 edit-user-btn" data-row-index="${user.rowIndex}" data-username="${sanitizeHTML(user.username)}"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-warning me-2 edit-user-btn" data-row-index="${user.rowIndex}" data-username="${sanitizeHTML(user.username)}" data-role="${sanitizeHTML(user.role)}"><i class="bi bi-pencil"></i></button>
                             <button class="btn btn-sm btn-outline-danger delete-user-btn" data-row-index="${user.rowIndex}"><i class="bi bi-trash"></i></button>
                         </td>
                     </tr>`);
@@ -1462,9 +1488,10 @@
                     });
                     
                     if (hasChanges) {
-                        // ***** FIX: Always render both dashboard and tickets when data changes *****
                         renderDashboard(allTickets); 
-                        renderTickets(allTickets);
+                        if (document.getElementById('admin-view-tickets').style.display === 'block') {
+                            renderTickets(allTickets);
+                        }
                     }
                 }
                 lastCheckedTimestamp = requestFinishedTime;
@@ -1477,6 +1504,19 @@
         function showDashboard() {
             DOMElements.adminDashboard.style.display = 'block';
             DOMElements.logoutBtn.style.display = 'inline-flex';
+            
+            // ***** CHANGE: ตรวจสอบ Role และซ่อน/แสดงเมนูจัดการผู้ใช้ *****
+            const userRole = sessionStorage.getItem('userRole');
+            if (userRole === 'Admin') {
+                DOMElements.navUsersLi.style.display = 'list-item';
+            } else {
+                DOMElements.navUsersLi.style.display = 'none';
+                // ถ้าไม่ใช่ Admin ให้กลับไปหน้า dashboard เสมอ ป้องกันการเข้าหน้า user โดยตรง
+                if (document.getElementById('admin-view-users').style.display === 'block') {
+                    switchAdminView('admin-view-dashboard');
+                }
+            }
+
             renderDashboard(allTickets);
             renderTickets(allTickets);
             renderUsers(adminUsers);
@@ -1498,6 +1538,8 @@
                 });
             }
             sessionStorage.removeItem('authToken');
+            // ***** CHANGE: ลบ Role ออกจาก sessionStorage ตอน Logout *****
+            sessionStorage.removeItem('userRole');
             DOMElements.adminDashboard.style.display = 'none';
             DOMElements.logoutBtn.style.display = 'none';
             if (pollingIntervalId) clearInterval(pollingIntervalId);
@@ -1522,6 +1564,8 @@
 
                 if (result.success && result.token) {
                     sessionStorage.setItem('authToken', result.token);
+                    // ***** CHANGE: เก็บ Role ที่ได้จาก Server ลงใน sessionStorage *****
+                    sessionStorage.setItem('userRole', result.role);
                     Modals.login.hide();
                     DOMElements.loginError.style.display = 'none';
                     initializeApp();
@@ -1556,9 +1600,11 @@
             }
             
             if (editBtn) {
+                // ***** CHANGE: ดึงค่า role มาใส่ในฟอร์มแก้ไข *****
                 document.getElementById('editUserRowIndex').value = editBtn.dataset.rowIndex;
-                document.getElementById('editUsername').value = editBtn.dataset.username;
-                document.getElementById('editPassword').value = ''; 
+                DOMElements.editUsernameInput.value = editBtn.dataset.username;
+                DOMElements.editUserRoleSelect.value = editBtn.dataset.role;
+                DOMElements.editPasswordInput.value = ''; 
                 Modals.editUser.show();
             }
             if (deleteBtn) {
@@ -1584,17 +1630,21 @@
 
         DOMElements.addUserForm.addEventListener('submit', (e) => {
             e.preventDefault();
+            // ***** CHANGE: ส่งค่า Role ไปด้วยตอนเพิ่มผู้ใช้ *****
             postToAction('addUser', {
                 username: DOMElements.newUsernameInput.value,
-                password: DOMElements.newPasswordInput.value
+                password: DOMElements.newPasswordInput.value,
+                role: DOMElements.newUserRoleSelect.value
             });
         });
         DOMElements.editUserForm.addEventListener('submit', (e) => {
             e.preventDefault();
+            // ***** CHANGE: ส่งค่า Role ไปด้วยตอนแก้ไขผู้ใช้ *****
             postToAction('editUser', {
                 rowIndex: document.getElementById('editUserRowIndex').value,
                 username: DOMElements.editUsernameInput.value,
-                password: DOMElements.editPasswordInput.value
+                password: DOMElements.editPasswordInput.value,
+                role: DOMElements.editUserRoleSelect.value
             }).then(() => Modals.editUser.hide());
         });
         

@@ -321,6 +321,11 @@
                             <option>Software (โปรแกรม)</option>
                             <option>Network (ระบบเครือข่าย/อินเทอร์เน็ต)</option>
                             <option>Printer (เครื่องพิมพ์)</option>
+                            <!-- ***** CHANGE: เพิ่มตัวเลือกใหม่ ***** -->
+                            <option>เครื่องเปิดไม่ติด</option>
+                            <option>Outlook</option>
+                            <option>VPN</option>
+                            <option>เปิดสิทธิ์เข้าโฟลเดอร์</option>
                             <option>Other (อื่นๆ)</option>
                         </select>
                     </div>
@@ -403,7 +408,6 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYKnFhgUsIQqj6B09f27eg210oIxy1rcmgX3atEU5_j5j2y8G0NrU9L1qKKEFPOlH-0Q/exec';
-        // ***** FIX #2: ลบ Webhook URL ออกจากฝั่ง Client *****
         
         const helpdeskForm = document.getElementById('helpdesk-form');
         const loaderContainer = document.querySelector('.loader-container');
@@ -457,7 +461,6 @@
                     headers: {
                         'Content-Type': 'text/plain;charset=utf-8',
                     },
-                    // ***** FIX #2: ไม่ต้องส่ง Webhook URL ไปกับข้อมูลแล้ว *****
                     body: JSON.stringify({ 
                         action, 
                         ...data
@@ -555,8 +558,9 @@
 
             let sanitized = value.replace(/[^a-zA-Z0-9]/g, '');
 
-            if (sanitized.length > 10) {
-                sanitized = sanitized.substring(0, 10);
+            // ***** CHANGE: จำกัดความยาวไม่เกิน 22 ตัวอักษร *****
+            if (sanitized.length > 22) {
+                sanitized = sanitized.substring(0, 22);
             }
 
             if (input.value !== sanitized) {

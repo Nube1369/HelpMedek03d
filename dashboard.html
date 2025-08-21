@@ -1403,7 +1403,6 @@
                             <div class="ticket-footer small text-muted mt-3 pt-3 border-top border-secondary-subtle">
                                 <div>แจ้งเมื่อ: ${sanitizeHTML(ticket.SubmissionDate) || 'N/A'} ${sanitizeHTML(ticket.SubmissionTime) || 'N/A'}</div>
                                 ${ticket.Status === 'Closed' ? `<div>ปิดเมื่อ: ${sanitizeHTML(ticket.ClosedDate) || 'N/A'} ${sanitizeHTML(ticket.ClosedTime) || 'N/A'}</div>` : ''}
-                                ${ticket.Status === 'Closed' && ticket.ClosedBy ? `<div>ปิดโดย: <strong>${sanitizeHTML(ticket.ClosedBy)}</strong></div>` : ''}
                             </div>
                             ${ticket.Status === 'Closed' && ticket.ResolutionComment ? `
                             <div class="mt-3 pt-3 border-top border-secondary-subtle">
@@ -1491,7 +1490,9 @@
                     
                     if (hasChanges) {
                         renderDashboard(allTickets); 
-                        renderTickets(allTickets);
+                        if (document.getElementById('admin-view-tickets').style.display === 'block') {
+                            renderTickets(allTickets);
+                        }
                     }
                 }
                 lastCheckedTimestamp = requestFinishedTime;

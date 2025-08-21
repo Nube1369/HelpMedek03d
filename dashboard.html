@@ -814,7 +814,6 @@
             <div class="navbar-brand fw-bold d-flex align-items-center">
                 <img src="https://res.cloudinary.com/dqveqz8cy/image/upload/v1753430042/IT_Logo_ptq112.png" alt="IT Helpdesk Logo" style="height: 40px; margin-right: 12px;">
             </div>
-            <!-- ***** CHANGE: ปรับโครงสร้าง HTML เพื่อเพิ่มพื้นที่แสดงชื่อผู้ใช้ ***** -->
             <div class="ms-auto d-flex align-items-center">
                  <div id="user-display" class="text-white me-3" style="display: none;">
                     <i class="bi bi-person-circle me-1"></i>
@@ -993,7 +992,6 @@
             editPasswordInput: document.getElementById('editPassword'),
             editUserRoleSelect: document.getElementById('editUserRole'),
             navUsersLi: document.getElementById('nav-users-li'),
-            // ***** CHANGE: เพิ่มตัวแปรสำหรับแสดงชื่อผู้ใช้ *****
             userDisplay: document.getElementById('user-display'),
             usernamePlaceholder: document.getElementById('username-placeholder')
         };
@@ -1492,11 +1490,11 @@
                         hasChanges = true;
                     });
                     
+                    // ***** FIX: แก้ไขจุดที่ทำให้หน้าจอไม่ Refresh *****
                     if (hasChanges) {
                         renderDashboard(allTickets); 
-                        if (document.getElementById('admin-view-tickets').style.display === 'block') {
-                            renderTickets(allTickets);
-                        }
+                        // ลบเงื่อนไข if ออก เพื่อให้ renderTickets ทำงานทุกครั้งที่มีการเปลี่ยนแปลง
+                        renderTickets(allTickets);
                     }
                 }
                 lastCheckedTimestamp = requestFinishedTime;
@@ -1510,7 +1508,6 @@
             DOMElements.adminDashboard.style.display = 'block';
             DOMElements.logoutBtn.style.display = 'inline-flex';
             
-            // ***** CHANGE: แสดงชื่อผู้ใช้ที่ Login อยู่ *****
             const username = sessionStorage.getItem('username');
             if (username) {
                 DOMElements.usernamePlaceholder.textContent = username;
@@ -1549,11 +1546,9 @@
             }
             sessionStorage.removeItem('authToken');
             sessionStorage.removeItem('userRole');
-            // ***** CHANGE: ลบชื่อผู้ใช้ออกจาก sessionStorage ตอน Logout *****
             sessionStorage.removeItem('username');
             DOMElements.adminDashboard.style.display = 'none';
             DOMElements.logoutBtn.style.display = 'none';
-            // ***** CHANGE: ซ่อนชื่อผู้ใช้ตอน Logout *****
             DOMElements.userDisplay.style.display = 'none';
             if (pollingIntervalId) clearInterval(pollingIntervalId);
             Modals.login.show();
@@ -1578,7 +1573,6 @@
                 if (result.success && result.token) {
                     sessionStorage.setItem('authToken', result.token);
                     sessionStorage.setItem('userRole', result.role);
-                    // ***** CHANGE: เก็บชื่อผู้ใช้ไว้ใน sessionStorage *****
                     sessionStorage.setItem('username', username);
                     Modals.login.hide();
                     DOMElements.loginError.style.display = 'none';

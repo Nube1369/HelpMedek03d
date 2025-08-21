@@ -943,7 +943,7 @@
     
     <div class="modal fade" id="confirmModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-question-circle me-2"></i>ยืนยันการดำเนินการ</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="confirmModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button><button type="button" class="btn btn-primary" id="confirmModalBtn">ยืนยัน</button></div></div></div></div>
 
-    <div class="modal fade" id="editUserModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>แก้ไขข้อมูลผู้ใช้</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="edit-user-form"><input type="hidden" id="editUserRowIndex"><div class="mb-3"><label class="form-label">Username</label><input type="text" class="form-control" id="editUsername" required></div><div class="mb-3"><label class="form-label">Password (ตั้งรหัสใหม่)</label><input type="password" class="form-control" id="editPassword" required></div><div class="mb-3"><label class="form-label">Role</label><select id="editUserRole" class="form-select"><option value="Agent">Agent</option><option value="Admin">Admin</option></select></div><button type="submit" class="btn btn-primary w-100">บันทึก</button></form></div></div></div></div>
+    <div class="modal fade" id="editUserModal" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>แก้ไขข้อมูลผู้ใช้</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="edit-user-form"><input type="hidden" id="editUsernameHidden"><div class="mb-3"><label class="form-label">Username</label><input type="text" class="form-control" id="editUsername" required></div><div class="mb-3"><label class="form-label">Password (ตั้งรหัสใหม่)</label><input type="password" class="form-control" id="editPassword" required></div><div class="mb-3"><label class="form-label">Role</label><select id="editUserRole" class="form-select"><option value="Agent">Agent</option><option value="Admin">Admin</option></select></div><button type="submit" class="btn btn-primary w-100">บันทึก</button></form></div></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/@popperjs/core@2"></script>
@@ -1427,11 +1427,10 @@
                 userTableBodyEl.insertAdjacentHTML('beforeend', `
                     <tr>
                         <td>${sanitizeHTML(user.username)}</td>
-                        <td>******</td>
                         <td><span class="badge bg-secondary">${sanitizeHTML(user.role)}</span></td>
                         <td class="text-end">
-                            <button class="btn btn-sm btn-outline-warning me-2 edit-user-btn" data-row-index="${user.rowIndex}" data-username="${sanitizeHTML(user.username)}" data-role="${sanitizeHTML(user.role)}"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-outline-danger delete-user-btn" data-row-index="${user.rowIndex}"><i class="bi bi-trash"></i></button>
+                            <button class="btn btn-sm btn-outline-warning me-2 edit-user-btn" data-username="${sanitizeHTML(user.username)}" data-role="${sanitizeHTML(user.role)}"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger delete-user-btn" data-username="${sanitizeHTML(user.username)}"><i class="bi bi-trash"></i></button>
                         </td>
                     </tr>`);
             });
@@ -1490,10 +1489,8 @@
                         hasChanges = true;
                     });
                     
-                    // ***** FIX: แก้ไขจุดที่ทำให้หน้าจอไม่ Refresh *****
                     if (hasChanges) {
                         renderDashboard(allTickets); 
-                        // ลบเงื่อนไข if ออก เพื่อให้ renderTickets ทำงานทุกครั้งที่มีการเปลี่ยนแปลง
                         renderTickets(allTickets);
                     }
                 }
@@ -1608,7 +1605,7 @@
             }
             
             if (editBtn) {
-                document.getElementById('editUserRowIndex').value = editBtn.dataset.rowIndex;
+                document.getElementById('editUsernameHidden').value = editBtn.dataset.username;
                 DOMElements.editUsernameInput.value = editBtn.dataset.username;
                 DOMElements.editUserRoleSelect.value = editBtn.dataset.role;
                 DOMElements.editPasswordInput.value = ''; 
@@ -1616,7 +1613,7 @@
             }
             if (deleteBtn) {
                 if (adminUsers.length <= 1) return showAlert('ไม่สามารถลบผู้ใช้คนสุดท้ายได้', false);
-                showConfirm('คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้?', () => postToAction('deleteUser', { rowIndex: deleteBtn.dataset.rowIndex }));
+                showConfirm(`คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้?`, () => postToAction('deleteUser', { username: deleteBtn.dataset.username }));
             }
         });
         
@@ -1646,8 +1643,7 @@
         DOMElements.editUserForm.addEventListener('submit', (e) => {
             e.preventDefault();
             postToAction('editUser', {
-                rowIndex: document.getElementById('editUserRowIndex').value,
-                username: DOMElements.editUsernameInput.value,
+                username: document.getElementById('editUsernameHidden').value,
                 password: DOMElements.editPasswordInput.value,
                 role: DOMElements.editUserRoleSelect.value
             }).then(() => Modals.editUser.hide());
@@ -1670,7 +1666,7 @@
 
             if (needsRefresh) {
                 needsRefresh = false; 
-                initializeApp(false); 
+                initializeApp(true); 
             }
         });
 

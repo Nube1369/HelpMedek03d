@@ -1490,9 +1490,7 @@
                     
                     if (hasChanges) {
                         renderDashboard(allTickets); 
-                        if (document.getElementById('admin-view-tickets').style.display === 'block') {
-                            renderTickets(allTickets);
-                        }
+                        renderTickets(allTickets);
                     }
                 }
                 lastCheckedTimestamp = requestFinishedTime;
@@ -1530,7 +1528,7 @@
 
         function startPolling() {
             if (pollingIntervalId) clearInterval(pollingIntervalId);
-            pollingIntervalId = setInterval(fetchUpdates, 15000);
+            pollingIntervalId = setInterval(fetchUpdates, 10000); // <-- CHANGE: Reduced to 10 seconds
         }
 
         function handleLogout() {

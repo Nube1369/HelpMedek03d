@@ -1528,7 +1528,7 @@
 
         function startPolling() {
             if (pollingIntervalId) clearInterval(pollingIntervalId);
-            pollingIntervalId = setInterval(fetchUpdates, 10000); // <-- CHANGE: Reduced to 10 seconds
+            pollingIntervalId = setInterval(fetchUpdates, 5000); 
         }
 
         function handleLogout() {

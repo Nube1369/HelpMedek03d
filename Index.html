@@ -303,7 +303,7 @@
                 <form id="helpdesk-form">
                     <div class="mb-4">
                         <label for="submitterName" class="form-label"><i class="bi bi-person me-2"></i>ชื่อผู้แจ้ง</label>
-                        <input type="text" class="form-control" id="submitterName" placeholder="กรุณากรอกชื่อ-นามสกุล" required data-tippy-content="กรุณากรอกชื่อ ภาษาอังกฤษ_นามสกุลตัวแรก เช่น kanate_h">
+                        <input type="text" class="form-control" id="submitterName" placeholder="กรอกชื่อ(อังกฤษ) หรือรหัส" required data-tippy-content="สามารถกรอกชื่อภาษาอังกฤษ และตัวเลขได้">
                     </div>
                     <div class="mb-4">
                         <label for="contactNumber" class="form-label"><i class="bi bi-telephone me-2"></i>เบอร์ติดต่อ หรือ 3CX</label>
@@ -321,7 +321,6 @@
                             <option>Software (โปรแกรม)</option>
                             <option>Network (ระบบเครือข่าย/อินเทอร์เน็ต)</option>
                             <option>Printer (เครื่องพิมพ์)</option>
-                            <!-- ***** CHANGE: เพิ่มตัวเลือกใหม่ ***** -->
                             <option>เครื่องเปิดไม่ติด</option>
                             <option>Outlook</option>
                             <option>VPN</option>
@@ -546,7 +545,8 @@
         nameInput.addEventListener('input', (e) => {
             const input = e.target;
             let value = input.value;
-            let sanitized = value.replace(/[^a-zA-Z_ -]/g, '');
+            // ***** CHANGE: Allow numbers in the name field *****
+            let sanitized = value.replace(/[^a-zA-Z0-9_ -]/g, '');
             if (input.value !== sanitized) {
                 input.value = sanitized;
             }
@@ -558,11 +558,8 @@
 
             let sanitized = value.replace(/[^a-zA-Z0-9]/g, '');
 
-            // ***** CHANGE: จำกัดความยาวไม่เกิน 22 ตัวอักษร *****
-            if (sanitized.length > 22) {
-                sanitized = sanitized.substring(0, 22);
-            }
-
+            // ***** CHANGE: Removed character length limit *****
+            
             if (input.value !== sanitized) {
                 input.value = sanitized;
             }
@@ -572,3 +569,4 @@
     </script>
 </body>
 </html>
+```

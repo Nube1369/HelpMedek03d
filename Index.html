@@ -98,6 +98,16 @@
             border-color: var(--bs-primary); 
             box-shadow: 0 0 0 0.2rem rgba(34, 197, 94, 0.25); 
         }
+        
+        /* Input group tweak for border radius consistency */
+        .input-group .form-control:focus, .input-group .form-select:focus {
+            z-index: 3;
+        }
+        .input-group-text {
+            background-color: rgba(30, 41, 59, 0.5);
+            border-color: var(--bs-border-color);
+            color: var(--bs-body-color);
+        }
 
         .modal-content { background: var(--bs-card-bg); border: 1px solid var(--bs-border-color); border-radius: 1rem; }
 
@@ -302,9 +312,18 @@
             <div class="card-body p-4 p-lg-5">
                 <form id="helpdesk-form">
                     <div class="mb-4">
-                        <label for="submitterName" class="form-label"><i class="bi bi-person me-2"></i>ชื่อผู้แจ้ง</label>
-                        <input type="text" class="form-control" id="submitterName" placeholder="กรุณากรอกชื่อ-นามสกุล" required data-tippy-content="กรุณากรอกชื่อ ภาษาอังกฤษ_นามสกุลตัวแรก เช่น kanate_h">
+                        <label for="emailUser" class="form-label"><i class="bi bi-envelope me-2"></i>E-mail ผู้แจ้ง</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="emailUser" placeholder="ชื่ออีเมล (ไม่ต้องใส่ @)" required data-tippy-content="กรอกเฉพาะชื่ออีเมล เช่น somchai.j">
+                            <span class="input-group-text">@</span>
+                            <select class="form-select" id="emailDomain" style="max-width: 180px;" required>
+                                <option selected value="gfca.com">gfca.com</option>
+                                <option value="asiatic.co.th">asiatic.co.th</option>
+                                <option value="ifandbthailand.com">ifandbthailand.com</option>
+                            </select>
+                        </div>
                     </div>
+
                     <div class="mb-4">
                         <label for="contactNumber" class="form-label"><i class="bi bi-telephone me-2"></i>เบอร์ติดต่อ หรือ 3CX</label>
                         <input type="tel" class="form-control" id="contactNumber" placeholder="กรุณากรอกเบอร์โทรศัพท์" required data-tippy-content="ใส่เบอร์มือถือ หรือ เบอร์ 3cx ของตัวเอง เช่น 1222">
@@ -321,6 +340,7 @@
                             <option>Software (โปรแกรม)</option>
                             <option>Network (ระบบเครือข่าย/อินเทอร์เน็ต)</option>
                             <option>Printer (เครื่องพิมพ์)</option>
+                            <option>Claim Equipment (เคลมอุปกรณ์)</option> <!-- Added new option -->
                             <option>เครื่องเปิดไม่ติด</option>
                             <option>Outlook</option>
                             <option>VPN</option>
@@ -411,7 +431,8 @@
         const helpdeskForm = document.getElementById('helpdesk-form');
         const loaderContainer = document.querySelector('.loader-container');
         const contactInput = document.getElementById('contactNumber');
-        const nameInput = document.getElementById('submitterName');
+        const emailUserInput = document.getElementById('emailUser'); 
+        const emailDomainInput = document.getElementById('emailDomain'); 
         const departmentInput = document.getElementById('department');
 
         const alertModalEl = document.getElementById('alertModal');
@@ -482,7 +503,10 @@
             setTimeout(() => {
                 if (success) {
                     showAlert(responseMessage);
-                    document.getElementById('submitterName').value = '';
+                    // Clear inputs
+                    document.getElementById('emailUser').value = '';
+                    document.getElementById('emailDomain').selectedIndex = 0; 
+                    
                     document.getElementById('department').value = '';
                     document.getElementById('contactNumber').value = '';
                     document.getElementById('problemType').value = '';
@@ -499,8 +523,11 @@
         helpdeskForm.addEventListener('submit', (e) => {
             e.preventDefault();
             if (helpdeskForm.checkValidity()) {
+                // Construct full email address to send as submitterName
+                const fullEmail = document.getElementById('emailUser').value + '@' + document.getElementById('emailDomain').value;
+                
                 const data = {
-                    submitterName: document.getElementById('submitterName').value,
+                    submitterName: fullEmail, // Send email instead of name, keeping the same key for GAS
                     department: document.getElementById('department').value,
                     contactNumber: document.getElementById('contactNumber').value,
                     problemType: document.getElementById('problemType').value,
@@ -542,11 +569,12 @@
             }
         });
 
-        nameInput.addEventListener('input', (e) => {
+        // Validation for Email User part (allow letters, numbers, dot, underscore, dash)
+        emailUserInput.addEventListener('input', (e) => {
             const input = e.target;
             let value = input.value;
-            // ***** CHANGE: Allow numbers in the name field *****
-            let sanitized = value.replace(/[^a-zA-Z0-9_ -]/g, '');
+            // Allow a-z, A-Z, 0-9, dot (.), underscore (_), hyphen (-)
+            let sanitized = value.replace(/[^a-zA-Z0-9._-]/g, '');
             if (input.value !== sanitized) {
                 input.value = sanitized;
             }
@@ -558,8 +586,6 @@
 
             let sanitized = value.replace(/[^a-zA-Z0-9]/g, '');
 
-            // ***** CHANGE: Removed character length limit *****
-            
             if (input.value !== sanitized) {
                 input.value = sanitized;
             }
@@ -569,4 +595,3 @@
     </script>
 </body>
 </html>
-

@@ -1144,7 +1144,8 @@
                             <div class="card h-100">
                                 <div class="card-header"
                                     data-tippy-content="สรุปภาพรวมของเคสที่เกิดขึ้นในสัปดาห์ปัจจุบัน (นับวันจันทร์เป็นวันเริ่มต้น)">
-                                    <i class="bi bi-calendar-week me-2"></i>สถิติสัปดาห์นี้</div>
+                                    <i class="bi bi-calendar-week me-2"></i>สถิติสัปดาห์นี้
+                                </div>
                                 <div class="card-body">
                                     <ul class="stats-list" id="weekly-stats-list"></ul>
                                 </div>
@@ -1154,7 +1155,8 @@
                             <div class="card h-100">
                                 <div class="card-header"
                                     data-tippy-content="วิเคราะห์ประสิทธิภาพในการแก้ไขปัญหา โดยวัดระยะเวลาตั้งแต่แจ้งจนปิดเคส">
-                                    <i class="bi bi-hourglass-split me-2"></i>สถิติเวลาในการแก้ไข</div>
+                                    <i class="bi bi-hourglass-split me-2"></i>สถิติเวลาในการแก้ไข
+                                </div>
                                 <div class="card-body">
                                     <ul class="stats-list" id="resolution-time-stats-list"></ul>
                                 </div>
@@ -1440,6 +1442,7 @@
                     activeLink.classList.add('active');
                 }
                 if (targetId === 'admin-view-dashboard') renderDashboard(allTickets);
+                if (targetId === 'admin-view-tickets') renderTickets(allTickets);
             };
 
             const postToAction = async (action, data) => {
@@ -1782,7 +1785,26 @@
                         <div class="card-body d-flex flex-column">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <span class="ticket-id">${sanitizeHTML(ticket.CaseID)}</span>
-                                <span class="badge rounded-pill status-badge ${ticket.Status === 'Open' ? 'bg-warning' : 'bg-success'}">${sanitizeHTML(ticket.Status)}</span>
+                                <div class="d-flex flex-column gap-1 align-items-end">
+                                    <span class="badge rounded-pill status-badge ${ticket.Status === 'Open' ? 'bg-warning' : 'bg-success'}">${sanitizeHTML(ticket.Status)}</span>
+                                    ${(() => {
+                            if (ticket.Status !== 'Closed') return '';
+                            const isEvaluated = ticket.ScoreQ && ticket.ScoreQ.toString().trim() !== '';
+                            return isEvaluated
+                                ? `<span class="badge rounded-pill bg-success bg-opacity-75" style="font-size: 0.75rem;"><i class="bi bi-star-fill me-1"></i>ประเมินแล้ว</span>`
+                                : `<span class="badge rounded-pill bg-secondary bg-opacity-50 text-light" style="font-size: 0.75rem;"><i class="bi bi-hourglass-split me-1"></i>รอประเมิน</span>`;
+                        })()}
+                                    ${(() => {
+                            if (ticket.Status !== 'Closed') return '';
+                            const emailStatus = ticket.EmailStatus ? ticket.EmailStatus.toString().trim() : '';
+                            if (emailStatus === 'Sent') {
+                                return `<span class="badge rounded-pill bg-info bg-opacity-75" style="font-size: 0.75rem;"><i class="bi bi-envelope-check-fill me-1"></i>ส่งเมลแล้ว</span>`;
+                            } else if (emailStatus.includes('Failed')) {
+                                return `<span class="badge rounded-pill bg-danger bg-opacity-75" style="font-size: 0.75rem;"><i class="bi bi-envelope-x-fill me-1"></i>ส่งไม่ผ่าน</span>`;
+                            }
+                            return '';
+                        })()}
+                                </div>
                             </div>
                             <div class="ticket-details mt-2">
                                 <p class="mb-1"><strong>ผู้แจ้ง:</strong> ${sanitizeHTML(ticket.SubmitterName)}</p>

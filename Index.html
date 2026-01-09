@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th" data-bs-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,8 +11,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <!-- Tippy.js for Tooltips -->
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
 
@@ -29,27 +32,35 @@
         }
 
         @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
-        body { 
+        body {
             background-color: var(--bs-body-bg);
-            background-image: radial-gradient(at 20% 20%, hsla(212,95%,60%,0.15) 0px, transparent 50%), 
-                              radial-gradient(at 80% 20%, hsla(160,95%,50%,0.15) 0px, transparent 50%),
-                              radial-gradient(at 50% 80%, hsla(280,95%,60%,0.15) 0px, transparent 50%);
+            background-image: radial-gradient(at 20% 20%, hsla(212, 95%, 60%, 0.15) 0px, transparent 50%),
+                radial-gradient(at 80% 20%, hsla(160, 95%, 50%, 0.15) 0px, transparent 50%),
+                radial-gradient(at 50% 80%, hsla(280, 95%, 60%, 0.15) 0px, transparent 50%);
             color: var(--bs-body-color);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
-        
-        .navbar { 
+
+        .navbar {
             background: transparent;
             border-bottom: 1px solid var(--bs-border-color);
         }
-        
+
         .main-container {
             flex-grow: 1;
             display: flex;
@@ -69,47 +80,54 @@
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
             animation: fadeIn 0.8s ease-out;
         }
-        
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .card-header { 
-            background: transparent; 
-            color: #f0fdf4; 
-            font-weight: 600; 
-            border-bottom: 1px solid var(--bs-border-color); 
+        .card-header {
+            background: transparent;
+            color: #f0fdf4;
+            font-weight: 600;
+            border-bottom: 1px solid var(--bs-border-color);
             padding: 1.5rem;
         }
-        
-        .form-label { font-weight: 500; margin-bottom: 0.75rem; }
-        
-        .form-control, .form-select { 
-            background: var(--bs-input-bg); 
-            color: var(--bs-body-color); 
-            border: 1px solid var(--bs-border-color); 
-            border-radius: 0.75rem; 
+
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+
+        .form-control,
+        .form-select {
+            background: var(--bs-input-bg);
+            color: var(--bs-body-color);
+            border: 1px solid var(--bs-border-color);
+            border-radius: 0.75rem;
             padding: 0.875rem 1rem;
             transition: all 0.2s ease-in-out;
         }
-        .form-control:focus, .form-select:focus { 
+
+        .form-control:focus,
+        .form-select:focus {
             background: rgba(51, 65, 85, 0.8);
-            border-color: var(--bs-primary); 
-            box-shadow: 0 0 0 0.2rem rgba(34, 197, 94, 0.25); 
-        }
-        
-        /* Input group tweak for border radius consistency */
-        .input-group .form-control:focus, .input-group .form-select:focus {
-            z-index: 3;
-        }
-        .input-group-text {
-            background-color: rgba(30, 41, 59, 0.5);
-            border-color: var(--bs-border-color);
-            color: var(--bs-body-color);
+            border-color: var(--bs-primary);
+            box-shadow: 0 0 0 0.2rem rgba(34, 197, 94, 0.25);
         }
 
-        .modal-content { background: var(--bs-card-bg); border: 1px solid var(--bs-border-color); border-radius: 1rem; }
+        .modal-content {
+            background: var(--bs-card-bg);
+            border: 1px solid var(--bs-border-color);
+            border-radius: 1rem;
+        }
 
         /* Custom Tippy.js Theme */
         .tippy-box[data-theme~='custom-dark'] {
@@ -124,20 +142,29 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
         }
-        .tippy-box[data-theme~='custom-dark'][data-placement^='top'] > .tippy-arrow::before {
+
+        .tippy-box[data-theme~='custom-dark'][data-placement^='top']>.tippy-arrow::before {
             border-top-color: var(--bs-card-bg);
         }
-        .tippy-box[data-theme~='custom-dark'][data-placement^='bottom'] > .tippy-arrow::before {
+
+        .tippy-box[data-theme~='custom-dark'][data-placement^='bottom']>.tippy-arrow::before {
             border-bottom-color: var(--bs-card-bg);
         }
-        .tippy-content { padding: 0.5rem 0.75rem; }
 
-        #alertModal .modal-title, #alertModal .modal-body { 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
+        .tippy-content {
+            padding: 0.5rem 0.75rem;
         }
-        #alertModal .modal-dialog{ max-width: 560px; }
+
+        #alertModal .modal-title,
+        #alertModal .modal-body {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #alertModal .modal-dialog {
+            max-width: 560px;
+        }
 
         .custom-btn {
             outline: none;
@@ -195,42 +222,57 @@
             0% {
                 width: 0%;
             }
+
             100% {
                 width: 100%;
             }
         }
 
         @keyframes check1 {
-            0%, 28% {
+
+            0%,
+            28% {
                 transform: scale(0.75);
                 background-color: #535353;
             }
-            29%, 100% {
+
+            29%,
+            100% {
                 transform: scale(1);
                 background-color: rgb(0, 205, 0);
             }
         }
+
         @keyframes check2 {
-            0%, 58% {
+
+            0%,
+            58% {
                 transform: scale(0.75);
                 background-color: #535353;
             }
-            59%, 100% {
+
+            59%,
+            100% {
                 transform: scale(1);
                 background-color: rgb(0, 205, 0);
             }
         }
+
         @keyframes check3 {
-            0%, 88% {
+
+            0%,
+            88% {
                 transform: scale(0.75);
                 background-color: #535353;
             }
-            89%, 100% {
+
+            89%,
+            100% {
                 transform: scale(1);
                 background-color: rgb(0, 205, 0);
             }
         }
-        
+
         .loader-container {
             position: fixed;
             top: 0;
@@ -285,21 +327,25 @@
         .check-bar-container .check:nth-of-type(2) {
             animation: check1 2.5s linear forwards;
         }
+
         .check-bar-container .check:nth-of-type(3) {
             animation: check2 2.5s linear forwards;
         }
+
         .check-bar-container .check:nth-of-type(4) {
             animation: check3 2.5s linear forwards;
             transform-origin: right;
         }
     </style>
 </head>
+
 <body>
 
     <nav class="navbar sticky-top">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
-                <img src="https://res.cloudinary.com/dqveqz8cy/image/upload/v1753430042/IT_Logo_ptq112.png" alt="IT Helpdesk Logo" style="height: 40px; margin-right: 12px;">
+                <img src="https://res.cloudinary.com/dqveqz8cy/image/upload/v1753430042/IT_Logo_ptq112.png"
+                    alt="IT Helpdesk Logo" style="height: 40px; margin-right: 12px;">
             </a>
         </div>
     </nav>
@@ -312,25 +358,34 @@
             <div class="card-body p-4 p-lg-5">
                 <form id="helpdesk-form">
                     <div class="mb-4">
-                        <label for="emailUser" class="form-label"><i class="bi bi-envelope me-2"></i>E-mail ผู้แจ้ง</label>
+                        <label for="submitterName" class="form-label"><i class="bi bi-envelope me-2"></i>E-mail
+                            ผู้แจ้ง</label>
                         <div class="input-group">
-                            <input type="text" class="form-control" id="emailUser" placeholder="กรอก email ไม่ต่องใส่ @" required data-tippy-content="กรอกเมลแล้ว เลือก @ ของท่าน">
+                            <input type="text" class="form-control" id="emailUsername"
+                                placeholder="ชื่ออีเมล (ไม่ต้องใส่ @)" required
+                                data-tippy-content="กรอกชื่ออีเมลของคุณ (ไม่ต้องใส่ @)">
                             <span class="input-group-text">@</span>
-                            <select class="form-select" id="emailDomain" style="max-width: 180px;" required>
-                                <option selected value="gfca.com">gfca.com</option>
+                            <select class="form-select" id="emailDomain" style="max-width: 200px;" required>
+                                <option value="" selected disabled>เลือกเมลของท่าน</option>
+                                <option value="gfca.com">gfca.com</option>
                                 <option value="asiatic.co.th">asiatic.co.th</option>
                                 <option value="ifandbthailand.com">ifandbthailand.com</option>
                             </select>
                         </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="contactNumber" class="form-label"><i class="bi bi-telephone me-2"></i>เบอร์ติดต่อ หรือ 3CX</label>
-                        <input type="tel" class="form-control" id="contactNumber" placeholder="กรุณากรอกเบอร์โทรศัพท์" required data-tippy-content="ใส่เบอร์มือถือ หรือ เบอร์ 3cx ของตัวเอง เช่น 1222">
+                        <input type="hidden" id="submitterName">
                     </div>
                     <div class="mb-4">
-                        <label for="department" class="form-label"><i class="bi bi-person-badge me-2"></i>รหัสพนักงาน</label>
-                        <input type="text" class="form-control" id="department" placeholder="กรุณากรอกรหัสพนักงาน" required data-tippy-content="กรุณากรอกรหัสพนักงานของคุณ">
+                        <label for="contactNumber" class="form-label"><i class="bi bi-telephone me-2"></i>เบอร์ติดต่อ
+                            หรือ 3CX</label>
+                        <input type="tel" class="form-control" id="contactNumber" placeholder="กรุณากรอกเบอร์โทรศัพท์"
+                            required data-tippy-content="ใส่เบอร์มือถือ หรือ เบอร์ 3cx ของตัวเอง เช่น 1222">
+                    </div>
+                    <div class="mb-4">
+                        <!-- ***** CHANGE: เปลี่ยน Label, placeholder, และ Tooltip ***** -->
+                        <label for="department" class="form-label"><i
+                                class="bi bi-person-badge me-2"></i>รหัสพนักงาน</label>
+                        <input type="text" class="form-control" id="department" placeholder="กรุณากรอกรหัสพนักงาน"
+                            required data-tippy-content="กรุณากรอกรหัสพนักงานของคุณ">
                     </div>
                     <div class="mb-4">
                         <label for="problemType" class="form-label"><i class="bi bi-tags me-2"></i>ประเภทปัญหา</label>
@@ -340,7 +395,7 @@
                             <option>Software (โปรแกรม)</option>
                             <option>Network (ระบบเครือข่าย/อินเทอร์เน็ต)</option>
                             <option>Printer (เครื่องพิมพ์)</option>
-                            <option>Claim Equipment (เคลมอุปกรณ์)</option> <!-- Added new option -->
+                            <option>Claim Equipment (เคลมอุปกรณ์)</option>
                             <option>เครื่องเปิดไม่ติด</option>
                             <option>Outlook</option>
                             <option>VPN</option>
@@ -349,8 +404,11 @@
                         </select>
                     </div>
                     <div class="mb-4">
-                        <label for="problemDetails" class="form-label"><i class="bi bi-chat-text me-2"></i>รายละเอียดปัญหา</label>
-                        <textarea class="form-control" id="problemDetails" rows="4" placeholder="กรุณาอธิบายปัญหาที่พบโดยละเอียด..." required data-tippy-content="รบกวนใส่ รายละเอียดปัญหาที่เกิดเบื้องต้น"></textarea>
+                        <label for="problemDetails" class="form-label"><i
+                                class="bi bi-chat-text me-2"></i>รายละเอียดปัญหา</label>
+                        <textarea class="form-control" id="problemDetails" rows="4"
+                            placeholder="กรุณาอธิบายปัญหาที่พบโดยละเอียด..." required
+                            data-tippy-content="รบกวนใส่ รายละเอียดปัญหาที่เกิดเบื้องต้น"></textarea>
                     </div>
                     <button type="submit" class="custom-btn w-100 py-3 fs-5 mt-3">
                         <span>
@@ -370,54 +428,39 @@
             <div class="check-bar-container">
                 <div></div>
                 <div class="check">
-                    <svg
-                        stroke="white"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            d="m4.5 12.75 6 6 9-13.5"
-                            stroke-linejoin="round"
-                            stroke-linecap="round"
-                        ></path>
+                    <svg stroke="white" stroke-width="2" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="m4.5 12.75 6 6 9-13.5" stroke-linejoin="round" stroke-linecap="round"></path>
                     </svg>
                 </div>
                 <div class="check">
-                    <svg
-                        stroke="white"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            d="m4.5 12.75 6 6 9-13.5"
-                            stroke-linejoin="round"
-                            stroke-linecap="round"
-                        ></path>
+                    <svg stroke="white" stroke-width="2" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="m4.5 12.75 6 6 9-13.5" stroke-linejoin="round" stroke-linecap="round"></path>
                     </svg>
                 </div>
                 <div class="check">
-                    <svg
-                        stroke="white"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            d="m4.5 12.75 6 6 9-13.5"
-                            stroke-linejoin="round"
-                            stroke-linecap="round"
-                        ></path>
+                    <svg stroke="white" stroke-width="2" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="m4.5 12.75 6 6 9-13.5" stroke-linejoin="round" stroke-linecap="round"></path>
                     </svg>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="alertModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="alertModalLabel"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="alertModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button></div></div></div></div>
+    <div class="modal fade" id="alertModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel"></h5><button type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="alertModalBody"></div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">ปิด</button></div>
+            </div>
+        </div>
+    </div>
 
     <!-- JS Libraries (load BEFORE inline script) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -425,175 +468,186 @@
     <script src="https://unpkg.com/tippy.js@6"></script>
 
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYKnFhgUsIQqj6B09f27eg210oIxy1rcmgX3atEU5_j5j2y8G0NrU9L1qKKEFPOlH-0Q/exec';
-        
-        const helpdeskForm = document.getElementById('helpdesk-form');
-        const loaderContainer = document.querySelector('.loader-container');
-        const contactInput = document.getElementById('contactNumber');
-        const emailUserInput = document.getElementById('emailUser'); 
-        const emailDomainInput = document.getElementById('emailDomain'); 
-        const departmentInput = document.getElementById('department');
+        document.addEventListener('DOMContentLoaded', () => {
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwE5zqQnxkLAtpuSUpFfIpUWcZ_zjdDMfa_O0mFlBAtM85WRJywHf3gFQZiswZ6TAQLWg/exec';
+            const TEAMS_WEBHOOK_URL = 'https://gfca01.webhook.office.com/webhookb2/de97901a-eefb-492a-8fb7-c03c603f6195@19af367e-c732-4ec7-8827-53efe436e9b4/IncomingWebhook/b3b24608d3b947228730d9c82a30262f/f3d1fd26-08ff-4a9f-abe5-849e27434f09/V2vUwqPWN-YVmEAjezmU9cTCSoI9WjUyLZpcOgGGbvNZI1';
 
-        const alertModalEl = document.getElementById('alertModal');
-        const alertModal = (window.bootstrap && window.bootstrap.Modal)
-            ? new bootstrap.Modal(alertModalEl)
-            : null;
+            const helpdeskForm = document.getElementById('helpdesk-form');
+            const loaderContainer = document.querySelector('.loader-container');
+            const contactInput = document.getElementById('contactNumber');
+            // const nameInput = document.getElementById('submitterName'); // Removed
+            const emailUsernameInput = document.getElementById('emailUsername');
+            const emailDomainSelect = document.getElementById('emailDomain');
 
-        if (window.tippy) {
-            tippy('[data-tippy-content]', {
-                theme: 'custom-dark',
-                animation: 'fade',
-                trigger: 'focus',
-                placement: 'top',
-            });
-        }
+            // ***** CHANGE: เพิ่มตัวแปรสำหรับช่องรหัสพนักงาน *****
+            const departmentInput = document.getElementById('department');
 
-        const showAlert = (message, isSuccess = true) => {
-            const title = document.getElementById('alertModalLabel');
-            const body = document.getElementById('alertModalBody');
-            if (title) title.textContent = isSuccess ? 'สำเร็จ!' : 'เกิดข้อผิดพลาด';
-            if (body) body.textContent = message;
+            const getFullEmail = () => {
+                const username = emailUsernameInput.value.trim();
+                const domain = emailDomainSelect.value;
+                return username ? `${username}@${domain}` : '';
+            };
 
-            if (alertModal) {
-                alertModal.show();
-                setTimeout(() => alertModal.hide(), 3000); 
-            } else {
-                alert(message);
-            }
-        };
+            const alertModalEl = document.getElementById('alertModal');
+            const alertModal = (window.bootstrap && window.bootstrap.Modal)
+                ? new bootstrap.Modal(alertModalEl)
+                : null;
 
-        const showLoading = (show) => { 
-            loaderContainer.style.display = show ? 'flex' : 'none'; 
-        };
-
-        const postToAction = async (action, data) => {
-            showLoading(true);
-            const submitBtn = helpdeskForm.querySelector('.custom-btn');
-            submitBtn.disabled = true;
-
-            let success = false;
-            let responseMessage = '';
-
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8',
-                    },
-                    body: JSON.stringify({ 
-                        action, 
-                        ...data
-                    })
+            if (window.tippy) {
+                tippy('[data-tippy-content]', {
+                    theme: 'custom-dark',
+                    animation: 'fade',
+                    trigger: 'focus',
+                    placement: 'top',
                 });
-                
-                const result = await response.json();
-                if (result.success) {
-                    success = true;
-                    responseMessage = 'ส่งเรื่องแจ้งปัญหาสำเร็จแล้ว! เจ้าหน้าที่จะดำเนินการตรวจสอบในลำดับต่อไป';
-                } else {
-                    success = false;
-                    responseMessage = result.message || 'เกิดข้อผิดพลาดที่ไม่รู้จัก';
-                }
-            } catch (error) {
-                success = false;
-                responseMessage = error.message;
             }
 
-            setTimeout(() => {
-                if (success) {
-                    showAlert(responseMessage);
-                    // Clear inputs
-                    document.getElementById('emailUser').value = '';
-                    document.getElementById('emailDomain').selectedIndex = 0; 
-                    
-                    document.getElementById('department').value = '';
-                    document.getElementById('contactNumber').value = '';
-                    document.getElementById('problemType').value = '';
-                    document.getElementById('problemDetails').value = '';
-                    helpdeskForm.classList.remove('was-validated');
+            const showAlert = (message, isSuccess = true) => {
+                const title = document.getElementById('alertModalLabel');
+                const body = document.getElementById('alertModalBody');
+                if (title) title.textContent = isSuccess ? 'สำเร็จ!' : 'เกิดข้อผิดพลาด';
+                if (body) body.textContent = message;
+
+                if (alertModal) {
+                    alertModal.show();
+                    setTimeout(() => alertModal.hide(), 3000);
                 } else {
-                    showAlert('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + responseMessage, false);
+                    alert(message);
                 }
-                showLoading(false);
-                submitBtn.disabled = false;
-            }, 2500);
-        };
+            };
 
-        helpdeskForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (helpdeskForm.checkValidity()) {
-                // Construct full email address to send as submitterName
-                const fullEmail = document.getElementById('emailUser').value + '@' + document.getElementById('emailDomain').value;
-                
-                const data = {
-                    submitterName: fullEmail, // Send email instead of name, keeping the same key for GAS
-                    department: document.getElementById('department').value,
-                    contactNumber: document.getElementById('contactNumber').value,
-                    problemType: document.getElementById('problemType').value,
-                    problemDetails: document.getElementById('problemDetails').value
-                };
-                postToAction('submitTicket', data);
-            } else {
-                e.stopPropagation();
-                helpdeskForm.classList.add('was-validated');
-            }
-        });
+            const showLoading = (show) => {
+                loaderContainer.style.display = show ? 'flex' : 'none';
+            };
 
-        contactInput.addEventListener('input', (e) => {
-            const input = e.target;
-            let value = input.value;
+            const postToAction = async (action, data) => {
+                showLoading(true);
+                const submitBtn = helpdeskForm.querySelector('.custom-btn');
+                submitBtn.disabled = true;
 
-            let sanitized = value.replace(/[^0-9-]/g, '');
+                let success = false;
+                let responseMessage = '';
 
-            let digitCount = (sanitized.match(/\d/g) || []).length;
+                try {
+                    const response = await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'text/plain;charset=utf-8',
+                        },
+                        body: JSON.stringify({
+                            action,
+                            ...data,
+                            teamsWebhookUrl: TEAMS_WEBHOOK_URL
+                        })
+                    });
 
-            if (digitCount > 10) {
-                let result = '';
-                let digitsFound = 0;
-                for (const char of sanitized) {
-                    if (/\d/.test(char)) {
-                        if (digitsFound < 10) {
-                            result += char;
-                            digitsFound++;
-                        }
+                    const result = await response.json();
+                    if (result.success) {
+                        success = true;
+                        responseMessage = 'ส่งเรื่องแจ้งปัญหาสำเร็จแล้ว! เจ้าหน้าที่จะดำเนินการตรวจสอบในลำดับต่อไป';
                     } else {
-                        result += char;
+                        success = false;
+                        responseMessage = result.message || 'เกิดข้อผิดพลาดที่ไม่รู้จัก';
                     }
+                } catch (error) {
+                    success = false;
+                    responseMessage = error.message;
                 }
-                sanitized = result;
-            }
 
-            if (input.value !== sanitized) {
-                input.value = sanitized;
-            }
+                setTimeout(() => {
+                    if (success) {
+                        showAlert(responseMessage);
+                        document.getElementById('emailUsername').value = '';
+                        document.getElementById('emailDomain').selectedIndex = 0;
+                        document.getElementById('department').value = '';
+                        document.getElementById('contactNumber').value = '';
+                        document.getElementById('problemType').value = '';
+                        document.getElementById('problemDetails').value = '';
+                        helpdeskForm.classList.remove('was-validated');
+                    } else {
+                        showAlert('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + responseMessage, false);
+                    }
+                    showLoading(false);
+                    submitBtn.disabled = false;
+                }, 2500);
+            };
+
+            helpdeskForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (helpdeskForm.checkValidity()) {
+                    const data = {
+                        submitterName: getFullEmail(),
+                        department: document.getElementById('department').value,
+                        contactNumber: document.getElementById('contactNumber').value,
+                        problemType: document.getElementById('problemType').value,
+                        problemDetails: document.getElementById('problemDetails').value
+                    };
+                    postToAction('submitTicket', data);
+                } else {
+                    e.stopPropagation();
+                    helpdeskForm.classList.add('was-validated');
+                }
+            });
+
+            contactInput.addEventListener('input', (e) => {
+                const input = e.target;
+                let value = input.value;
+
+                let sanitized = value.replace(/[^0-9-]/g, '');
+
+                let digitCount = (sanitized.match(/\d/g) || []).length;
+
+                if (digitCount > 10) {
+                    let result = '';
+                    let digitsFound = 0;
+                    for (const char of sanitized) {
+                        if (/\d/.test(char)) {
+                            if (digitsFound < 10) {
+                                result += char;
+                                digitsFound++;
+                            }
+                        } else {
+                            result += char;
+                        }
+                    }
+                    sanitized = result;
+                }
+
+                if (input.value !== sanitized) {
+                    input.value = sanitized;
+                }
+            });
+
+            emailUsernameInput.addEventListener('input', (e) => {
+                const input = e.target;
+                let value = input.value;
+                let sanitized = value.replace(/[^a-zA-Z0-9._-]/g, '');
+                if (input.value !== sanitized) {
+                    input.value = sanitized;
+                }
+            });
+
+            // ***** CHANGE: เพิ่ม Event Listener สำหรับช่องรหัสพนักงาน *****
+            departmentInput.addEventListener('input', (e) => {
+                const input = e.target;
+                let value = input.value;
+
+                // 1. กรองให้เหลือแค่ภาษาอังกฤษและตัวเลข
+                let sanitized = value.replace(/[^a-zA-Z0-9]/g, '');
+
+                // 2. จำกัดความยาวไม่เกิน 10 ตัวอักษร
+                if (sanitized.length > 10) {
+                    sanitized = sanitized.substring(0, 10);
+                }
+
+                // 3. อัปเดตค่าในช่อง input
+                if (input.value !== sanitized) {
+                    input.value = sanitized;
+                }
+            });
+
         });
-
-        // Validation for Email User part (allow letters, numbers, dot, underscore, dash)
-        emailUserInput.addEventListener('input', (e) => {
-            const input = e.target;
-            let value = input.value;
-            // Allow a-z, A-Z, 0-9, dot (.), underscore (_), hyphen (-)
-            let sanitized = value.replace(/[^a-zA-Z0-9._-]/g, '');
-            if (input.value !== sanitized) {
-                input.value = sanitized;
-            }
-        });
-
-        departmentInput.addEventListener('input', (e) => {
-            const input = e.target;
-            let value = input.value;
-
-            let sanitized = value.replace(/[^a-zA-Z0-9]/g, '');
-
-            if (input.value !== sanitized) {
-                input.value = sanitized;
-            }
-        });
-
-    });
     </script>
 </body>
+
 </html>
-
-
